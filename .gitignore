@@ -1,3 +1,5 @@
-Codigos_PC/models/*
 Codigos_PC/build/*
 Codigos_PC/libs/*
+Codigos_PC/models/model-f6b98070.pt
+Codigos_PC/models/traced_midas_model.pt
+
