@@ -4,9 +4,12 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
                 "C:/mingw64/include",
                 "C:/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include",
-                "C:/opencv/build/include"
+                "C:/opencv/build/include",
+                "C:/libtorch/include",
+                "C:/libtorch/include/torch/csrc/api/include/torch"
             ],
             "defines": [
                 // "NDEBUG",

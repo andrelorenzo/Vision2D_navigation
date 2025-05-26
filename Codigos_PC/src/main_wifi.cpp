@@ -113,8 +113,8 @@ int main() {
         return 1;
     }
 
-    std::vector<std::string> class_list = load_class_list("C:/Users/andre/Documents/Trabajo_fin_master/Codigos_PC/src/classes.txt");
-    cv::dnn::Net net = cv::dnn::readNet("C:/Users/andre/Documents/Trabajo_fin_master/Codigos_PC/src/yolov5n.onnx");
+    std::vector<std::string> class_list = load_class_list("C:/Users/andre/Documents/Trabajo_fin_master/Codigos_PC/models/classes.txt");
+    cv::dnn::Net net = cv::dnn::readNet("C:/Users/andre/Documents/Trabajo_fin_master/Codigos_PC/models/yolov5s_opencv.onnx");
     net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
     net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
 

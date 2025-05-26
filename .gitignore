@@ -1,7 +1,3 @@
 Codigos_PC/models/*
-Codigos_PC/MiDaS/
-Codigos_PC/yolov5/
-Codigos_PC/MiDaS-cpp/
-Codigos_PC/yolov5n.pt
-Codigos_PC/midas_v21_small_256.onnx
 Codigos_PC/build/*
+Codigos_PC/libs/*

@@ -51,6 +51,9 @@ void setupCamera() {
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x\n", err);
+  }else
+  {
+    Serial.println("Camera initialized successfully");
   }
 }
 
@@ -67,16 +70,13 @@ bool readExact(WiFiClient& client, uint8_t* buffer, size_t length, uint32_t time
 }
 
 void setup() {
+  delay(2000); // Estabilizar alimentación
   Serial.begin(SERIAL_BR);
   setupCamera();
+  delay(500); // Dar tiempo al sistema antes del WiFi
 
   WiFi.softAP(WIFI_SSID, WIFI_PASS);
-  //Serial.println("Access Point iniciado");
-  // Serial.print("IP: ");
-  //Serial.println(WiFi.softAPIP());
-
   server.begin();
-  //Serial.println("Servidor TCP iniciado");
 }
 
 void loop() {
@@ -92,8 +92,8 @@ void loop() {
           break;
         }
 
-        if (memcmp(cmd, CMD_CAPT, 4) == 0) {
-          //Serial.println("Comando CAPT recibido. Capturando imagen...");
+        if (memcmp(cmd, "CAPT", 4) == 0) {
+          Serial.println("Comando CAPT recibido. Capturando imagen...");
 
           camera_fb_t* fb = esp_camera_fb_get();
           if (!fb || fb->len == 0) {
