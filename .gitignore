@@ -1,4 +1,5 @@
 Codigos_PC/build/*
 Codigos_PC/models/model-f6b98070.pt
 Codigos_PC/models/traced_midas_model.pt
+Codigos_PC/libs/libtorch/*
 

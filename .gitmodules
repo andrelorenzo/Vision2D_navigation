@@ -1,9 +1,4 @@
 [submodule "Codigos_PC/libs/MiDaS"]
 	path = Codigos_PC/libs/MiDaS
 	url = https://github.com/isl-org/MiDaS.git
-[submodule "Codigos_PC/libs/yolov5"]
-	path = Codigos_PC/libs/yolov5
-	url = https://github.com/mnjm/yolo11.cpp.git
-[submodule "Codigos_PC/libs/Midas-cpp"]
-	path = Codigos_PC/libs/Midas-cpp
-	url = https://github.com/yan99033/MiDaS-cpp.git
+

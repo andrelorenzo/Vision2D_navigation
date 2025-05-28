@@ -1,16 +1,25 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 #include <opencv2/opencv.hpp>
 #include "serialib.h"
 
 #define HEADER1 0xA5
 #define HEADER2 0x5A
+#define SERIAL_PORT "/dev/ttyUSB0"
+#define BAUDRATE 250000
+
+// Devuelve tiempo actual en milisegundos
+unsigned long getTimeMs() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
+}
 
 bool waitForHeader(serialib& serial, unsigned long timeout_ms = 3000) {
     char b;
-    unsigned long start = GetTickCount();
+    unsigned long start = getTimeMs();
 
-    while (GetTickCount() - start < timeout_ms) {
+    while (getTimeMs() - start < timeout_ms) {
         if (serial.readChar(&b, 50) != 1) continue;
         if ((uint8_t)b == HEADER1) {
             if (serial.readChar(&b, 50) != 1) continue;
@@ -22,10 +31,10 @@ bool waitForHeader(serialib& serial, unsigned long timeout_ms = 3000) {
 
 bool readBytes(serialib& serial, std::vector<uint8_t>& buffer, size_t size, unsigned long timeout_ms = 5000) {
     buffer.resize(size);
-    unsigned long start = GetTickCount();
+    unsigned long start = getTimeMs();
     size_t totalRead = 0;
 
-    while (totalRead < size && GetTickCount() - start < timeout_ms) {
+    while (totalRead < size && getTimeMs() - start < timeout_ms) {
         int read = serial.readBytes((char*)&buffer[totalRead], size - totalRead, 100);
         if (read < 0) return false;
         totalRead += read;
@@ -36,16 +45,17 @@ bool readBytes(serialib& serial, std::vector<uint8_t>& buffer, size_t size, unsi
 
 int main() {
     serialib serial;
-    const char* port = "COM3";  // Cambia si es necesario
+    const char* port = SERIAL_PORT;  // Cambia al puerto adecuado
 
-    if (serial.openDevice(port, 250000) != 1) {
+    if (serial.openDevice(port, BAUDRATE) != 1) {
         std::cerr << "No se pudo abrir el puerto: " << port << std::endl;
+        return 1;
     }
 
     while (true) {
         std::cout << "\nEsperando cabecera..." << std::endl;
         if (!waitForHeader(serial)) {
-            std::cerr << "No se detecto cabecera valida. Reintentando...\n";
+            std::cerr << "No se detectó cabecera válida. Reintentando...\n";
             continue;
         }
 
@@ -56,7 +66,7 @@ int main() {
         }
 
         int size = ((uint8_t)sizeBytes[0] << 8) | (uint8_t)sizeBytes[1];
-        std::cout << "Tamano de imagen recibido: " << size << " bytes" << std::endl;
+        std::cout << "Tamaño de imagen recibido: " << size << " bytes" << std::endl;
 
         std::vector<uint8_t> imageData;
         if (!readBytes(serial, imageData, size)) {
@@ -71,8 +81,7 @@ int main() {
         }
 
         cv::imshow("Imagen recibida", img);
-        int key = cv::waitKey(1);
-        if (key == 27) break;
+        if (cv::waitKey(1) == 27) break;  // Tecla ESC para salir
     }
 
     serial.closeDevice();

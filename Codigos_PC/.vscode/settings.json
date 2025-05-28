@@ -29,6 +29,7 @@
         "map": "cpp",
         "memory": "cpp",
         "memory_resource": "cpp",
+        "C_Cpp.intelliSenseCacheSize": "1024",
         "numeric": "cpp",
         "optional": "cpp",
         "random": "cpp",
@@ -77,6 +78,13 @@
         "future": "cpp",
         "shared_mutex": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
-    }
+        "valarray": "cpp",
+        "any": "cpp",
+        "strstream": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "slist": "cpp",
+        "cfenv": "cpp"
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }
