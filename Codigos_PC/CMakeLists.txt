@@ -32,6 +32,8 @@ add_executable(obs_avoid_full_cpp_mt
     src/main_fullcpp_mt.cpp
     src/serialib.cpp
     src/yolov11.cpp
+    src/aux.cpp
+    src/globals.cpp
 )
 target_link_libraries(obs_avoid_full_cpp_mt PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
 target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${OpenCV_INCLUDE_DIRS})
