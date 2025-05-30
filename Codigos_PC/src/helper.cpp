@@ -1,4 +1,4 @@
-#include "aux.hpp"
+#include "helper.hpp"
 
 void signal_thread_done() {
     std::lock_guard<std::mutex> lock(threads_mutex);

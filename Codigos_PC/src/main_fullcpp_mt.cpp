@@ -1,5 +1,5 @@
 // Fragmento de código con buffer de sincronización controlado
-#include "aux.hpp"
+#include "helper.hpp"
 
 using DepthEstimationFn = std::function<cv::Mat(torch::jit::script::Module& model, const cv::Mat& frame)>;
 
