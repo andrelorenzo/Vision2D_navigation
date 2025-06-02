@@ -1,8 +1,19 @@
 // Fragmento de código con buffer de sincronización controlado
-#include "aux.hpp"
+#include "helper.hpp"
+cv::Mat depth_scaled_for_debug;
+void on_mouse_depth(int event, int x, int y, int, void*) {
+    if (!depth_scaled_for_debug.empty()) {
+        if (x >= 0 && x < depth_scaled_for_debug.cols &&
+            y >= 0 && y < depth_scaled_for_debug.rows) {
+            
+            float value = depth_scaled_for_debug.at<float>(y, x);
+            std::cout << "Depth at (" << x << ", " << y << ") = " 
+                      << std::fixed << std::setprecision(2) << value << " meters" << std::endl;
+        }
+    }
+}
 
-using DepthEstimationFn = std::function<cv::Mat(torch::jit::script::Module& model, const cv::Mat& frame)>;
-
+int model = 0;
 void frame_capture_thread(bool use_tcp, int sock, cv::VideoCapture& cap) {
     while (!stop_flag) {
         std::unique_lock<std::mutex> lock(frame_mutex);
@@ -29,7 +40,7 @@ void frame_capture_thread(bool use_tcp, int sock, cv::VideoCapture& cap) {
     }
 }
 
-void depth_thread(torch::jit::script::Module& depth_net, DepthEstimationFn estimate_fn) {
+void depth_thread(DepthModel& depth_model, DepthEstimationFn estimate_fn) {
     while (!stop_flag) {
         std::unique_lock<std::mutex> lock(frame_mutex);
         frame_cv.wait(lock, [] { return new_frame_ready || stop_flag; });
@@ -37,9 +48,9 @@ void depth_thread(torch::jit::script::Module& depth_net, DepthEstimationFn estim
         lock.unlock();
 
         int idx = frame_index.load() ^ 1;
-        cv::Mat frame = buffer_depth[idx].clone(); 
+        cv::Mat frame = buffer_depth[idx].clone();
 
-        current_depth = estimate_fn(depth_net, frame);
+        current_depth = estimate_fn(depth_model, frame);
 
         {
             std::lock_guard<std::mutex> guard(frame_mutex);
@@ -71,7 +82,15 @@ void yolo_thread(YOLOv11& yolo_model) {
 int main(int argc, char** argv) {
     bool use_tcp = true;
     bool use_yolo = false;
-    int model = 0;
+    bool do_bench = true;
+    
+    if (torch::cuda::is_available()) {
+        std::cout << "CUDA está disponible para LibTorch.\n";
+    } else {
+        std::cout << "CUDA no está disponible para LibTorch.\n";
+    }
+    std::cout << "Build with CUDA: " << cv::cuda::getCudaEnabledDeviceCount() << std::endl;
+    //std::cout << "cuDNN version: " << cv::getBuildInformation() << std::endl;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -79,43 +98,50 @@ int main(int argc, char** argv) {
         if (arg == "--yolo" || arg == "-y") use_yolo = true;
         if (arg == "--midasv21" || arg == "-m21") model = 0;
         if (arg == "--depthany" || arg == "-da") model = 1;
+        if (arg == "--nobench" || arg == "-nb") do_bench = false;
         if (arg == "--help" || arg == "-h") {
             std::cout << "Usage: ./obs_avoid_full_cpp_mt [PARAMS]\n";
             std::cout << "\t -c,  --camera\t If selected PC camera will be selected\n";
             std::cout << "\t -y,  --yolo\t If selected YOLOv11n will be run in parallel\n";
             std::cout << "\t -m21, --midasv21\t Model: Midas v21 small\n";
             std::cout << "\t -da, --depthany\t Model: Depth anything v2 outdoor dynamic\n";
+            std::cout << "\t -nb, --nobench\t Dont do benchmarking, acelerating therefore multitreadhing capabilities\n";
             return 0;
         }
     }
 
-    torch::jit::script::Module depth_model;
+    DepthModel depth_model;
     DepthEstimationFn depth_fn;
 
     switch (model) {
         case 0:
             std::cout << "Model: Midas v21 small" << std::endl;
-            depth_model = torch::jit::load("../models/model-small-traced.pt");
-            depth_fn = estimate_midas_depth_v21;
+            depth_model = cv::dnn::readNetFromONNX("../models/model-small.onnx");
+            std::get<cv::dnn::Net>(depth_model).setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+            std::get<cv::dnn::Net>(depth_model).setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
             break;
         case 1:
             std::cout << "Model: Depth anything v2 outdoor dynamic" << std::endl;
-            try {
-                depth_model = torch::jit::load("../models/depth_anything_v2_vits_traced.pt");
-            } catch (const c10::Error& e) {
-                std::cerr << "Error al cargar el modelo\n";
-                return -1;
+            depth_model = torch::jit::load("../models/depth_anything_v2_vits_traced.pt");
+            {
+                auto& model_ref = std::get<torch::jit::script::Module>(depth_model);
+                torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+                model_ref.to(device);
+                model_ref.eval();
             }
-            depth_fn = estimate_depth_anything_v2_outdoor;
+            // Usa CUDA si está disponible
             break;
         default:
-            std::cerr << "Modelo desconocido" << std::endl;
+            std::cerr << "Unknown model, only Midas v21 and depth anything can be used" << std::endl;
             return -1;
     }
 
+    depth_fn = estimate_depth_variant;
+
     YOLOv11 yolo_model("../models/yolo11n.onnx", 0.45f, 0.45f, [](int id, const std::string&) {
-        return id >= 0 && id <= 16;
+        return id == 41;
     });
+    auto obj_sizes = load_object_sizes("../models/object_sizes.txt");
 
     int sock = -1;
     cv::VideoCapture cap;
@@ -153,34 +179,43 @@ int main(int argc, char** argv) {
             new_frame_ready = false;
         }
 
-        if (use_yolo && !frame.empty() && !current_detections.empty() && !current_depth.empty())
-            annotate_with_depth(frame, current_depth, current_detections);
 
-
-        if (use_yolo && !frame.empty())
-            cv::imshow("YOLO + depth", frame);
-
+        static cv::Mat depth_filtered;
+        cv::Mat depth_vis;
         if (!current_depth.empty() && current_depth.cols > 0 && current_depth.rows > 0) {
-            cv::Mat depth_vis;
-            cv::normalize(current_depth, depth_vis, 0, 255, cv::NORM_MINMAX);
-            depth_vis.convertTo(depth_vis, CV_8U);
-            cv::applyColorMap(depth_vis, depth_vis, cv::COLORMAP_MAGMA);
-            draw_mean_slope_arrow_sobel(depth_vis, current_depth);
-            cv::imshow("Depth", depth_vis);
+            cv::Mat depth_for_normalization = current_depth;
+            if (model == 0) {
+                exponential_smoothing(current_depth, depth_filtered);
+                depth_for_normalization = depth_filtered;
+            }
+            cv::Mat smoothed_normalized = normalize_depth_with_percentile(depth_for_normalization);
+            cv::Mat depth_8u;
+            smoothed_normalized.convertTo(depth_8u, CV_8U, 255.0);
+            cv::applyColorMap(depth_8u, depth_vis, cv::COLORMAP_MAGMA);
+            draw_mean_slope_arrow_sobel(depth_vis, smoothed_normalized);
         }
+        bool depth_scaled = false;
+        if (use_yolo && !frame.empty() && !current_detections.empty() && !current_depth.empty()){
+            annotate_with_depth(frame, current_depth, current_detections, obj_sizes, depth_scaled);
+            cv::imshow("YOLO + depth", frame);
+        }
+        cv::imshow("Depth", depth_vis);
+        cv::setMouseCallback("Depth", on_mouse_depth);
+        depth_scaled_for_debug = current_depth.clone();  // contiene la profundidad escalada real
 
         if (cv::waitKey(1) == 27) break;
+        if(do_bench){
+            auto t_end = std::chrono::high_resolution_clock::now();
+            double elapsed_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
+            times_ms.push_back(elapsed_ms);
+            if (times_ms.size() > 10) times_ms.pop_front();
+            double avg_ms = std::accumulate(times_ms.begin(), times_ms.end(), 0.0) / times_ms.size();
+            double fps = 1000.0 / avg_ms;
 
-        auto t_end = std::chrono::high_resolution_clock::now();
-        double elapsed_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
-        times_ms.push_back(elapsed_ms);
-        if (times_ms.size() > 10) times_ms.pop_front();
-        double avg_ms = std::accumulate(times_ms.begin(), times_ms.end(), 0.0) / times_ms.size();
-        double fps = 1000.0 / avg_ms;
-
-        std::cout << std::fixed << std::setprecision(2);
-        std::cout << "[Benchmark] Avg frame time (10): " << avg_ms << " ms | FPS: " << fps << std::endl;
-        std::cout << "\033[2J\033[1;1H";
+            std::cout << std::fixed << std::setprecision(2);
+            std::cout << "[Benchmark] Avg frame time (10): " << avg_ms << " ms | FPS: " << fps << std::endl;
+            std::cout << "\033[2J\033[1;1H";
+        }
     }
 
     stop_flag = true;

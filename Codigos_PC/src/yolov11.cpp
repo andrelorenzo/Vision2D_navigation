@@ -1,5 +1,6 @@
 #include "yolov11.hpp"
 #include "debug.hpp"
+#define CUDA_ACC // for yolo
 
 ObjectBBox::ObjectBBox(const std::string &lbl, float conf_, float cx, float cy, float w, float h, float scale_x, float scale_y)
     : label(lbl), conf(conf_)

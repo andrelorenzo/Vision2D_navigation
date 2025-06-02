@@ -106,8 +106,8 @@ int main(int argc, char** argv) {
 
     // === Cargar modelo MiDaS ===
     cv::dnn::Net midas = cv::dnn::readNet("../models/model-small.onnx");
-    midas.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-    midas.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    midas.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+    midas.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
 
     int sock = -1;
     cv::VideoCapture cap;

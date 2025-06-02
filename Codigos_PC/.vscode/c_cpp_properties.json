@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
                 "/usr/local/include/opencv4/",
-                "${workspaceFolder}/libs/libtorch/include"
+                //"${workspaceFolder}/libs/libtorch/include"
+                "/home/andrelorent/libtorch/"
                 
             ],
             "defines": [

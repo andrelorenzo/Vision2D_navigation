@@ -13,10 +13,16 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <variant>
+#include <functional>
+#include <unordered_map>
+#include <sstream>
 
 #include <torch/script.h>
+#include <torch/torch.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
+
 #include "yolov11.hpp"
 
 #define SERVER_IP   "192.168.4.1"
@@ -44,3 +50,11 @@ extern std::vector<ObjectBBox> current_detections;
 extern std::atomic<int> threads_done;
 extern std::mutex threads_mutex;
 extern std::condition_variable threads_cv;
+
+using DepthModel = std::variant<cv::dnn::Net, torch::jit::script::Module>;
+using DepthEstimationFn = std::function<cv::Mat(DepthModel&, const cv::Mat&)>;
+
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
