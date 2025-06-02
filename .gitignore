@@ -1,5 +1,7 @@
 Codigos_PC/build/*
 Codigos_PC/models/model-f6b98070.pt
 Codigos_PC/models/traced_midas_model.pt
+Codigos_PC/models/dpt_hybrid_384_sim.onnx
+Codigos_PC/models/model-f6b98070.onnx
 Codigos_PC/libs/libtorch/*
-
+Codigos_PC/libs/Depth-Anything-V2
