@@ -32,27 +32,25 @@ endif()
 find_package(Torch REQUIRED)
 
 
-# Full code with both models in cpp and multitreding
-add_executable(obs_avoid_full_cpp_mt
-    src/main_fullcpp_mt.cpp
-    src/serialib.cpp
-    src/yolov11.cpp
-    src/helper.cpp
-    src/globals.cpp
-)
-target_link_libraries(obs_avoid_full_cpp_mt PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
-target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${OpenCV_INCLUDE_DIRS})
+# # Full code with both models in cpp and multitreding
+# add_executable(obs_avoid_full_cpp_mt
+#     src/main_fullcpp_mt.cpp
+#     src/serialib.cpp
+#     src/yolov11.cpp
+#     src/helper.cpp
+#     src/globals.cpp
+# )
+# target_link_libraries(obs_avoid_full_cpp_mt PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
+# target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${OpenCV_INCLUDE_DIRS})
 
-#Full code with both models in cpp 
-add_executable(obs_avoid_full_cpp
-    src/main_fullcpp.cpp
-    src/serialib.cpp
-    src/yolov11.cpp
-)
-target_link_libraries(obs_avoid_full_cpp PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
-target_include_directories(obs_avoid_full_cpp PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-
+# #Full code with both models in cpp 
+# add_executable(obs_avoid_full_cpp
+#     src/main_fullcpp.cpp
+#     src/serialib.cpp
+#     src/yolov11.cpp
+# )
+# target_link_libraries(obs_avoid_full_cpp PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
+# target_include_directories(obs_avoid_full_cpp PRIVATE ${OpenCV_INCLUDE_DIRS})
 
 
 # Test of ESPNOW bridge + Serial 
@@ -78,3 +76,18 @@ target_include_directories(obs_avoid_full_cpp PRIVATE ${OpenCV_INCLUDE_DIRS})
 # )
 # target_link_libraries(get_camera_params PRIVATE ${OpenCV_LIBS})
 # target_include_directories(get_camera_params PRIVATE ${OpenCV_INCLUDE_DIRS})
+
+
+set(ORT_PATH /home/andrelorent/programming/Vision2D_navigation/Codigos_PC/libs/onnxruntime-linux-x64-gpu-1.22.0)
+
+add_executable(depth_anything_app src/main_onnx_rt.cpp)
+
+target_include_directories(depth_anything_app PRIVATE ${ORT_PATH}/include)
+target_link_directories(depth_anything_app PRIVATE ${ORT_PATH}/lib)
+
+target_link_libraries(depth_anything_app
+    PRIVATE
+    ${OpenCV_LIBS}
+    onnxruntime
+    onnxruntime_providers_cuda
+)

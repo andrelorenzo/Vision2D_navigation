@@ -7,7 +7,8 @@
                 "${workspaceFolder}/include",
                 "/usr/local/include/opencv4/",
                 //"${workspaceFolder}/libs/libtorch/include"
-                "/home/andrelorent/libtorch/"
+                "/home/andrelorent/libtorch/",
+                "${workspaceFolder}/libs/onnxruntime-linux-x64-gpu-1.22.0/include"
                 
             ],
             "defines": [

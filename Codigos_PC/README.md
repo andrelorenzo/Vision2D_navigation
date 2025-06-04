@@ -32,7 +32,7 @@ cmake >= 3.27
 
 ### python
 ultralytics
-> Other dependencies are inside each repo as in requirements.txt in MiDaS-cpp
+> Other dependencies are inside each repo as in requirements.txt for MiDaS-cpp
 
 
 ## CUDA acceleration graphics
@@ -41,7 +41,7 @@ Driver: NVIDIA-SMI 550.144.03 (Driver Version: 550.144.03) => sudo apt install n
 toolkit cuda 12.1 => https://developer.nvidia.com/cuda-12-1-0-download-archive
 cuDNN => https://developer.nvidia.com/cudnn-downloads
 
-### Compilation of Opencv 4.12.0-dev 
+### Compilation of Opencv 4.12.0-dev with cuda enable
 nvidia-smi = check your GPU and CUDA version cappabilities, if not install => sudo apt install nvidia-driver-550 (or your compaible driver)
 nvcc --version => check cuda toolkit version, must be compatible with your driver
 (sudo reboot) => optional, if first time installing it is mandatory and must enterin the Enroll MOK, enter your password and enable in it
@@ -75,6 +75,8 @@ TO check:
   cuda = ON
   dnn cuda = ON
   CUDA_ARCH_BIN = 50 (this must be the same architecture as your GPU, you can look it up online)
+
+'''
 cmake -D CMAKE_BUILD_TYPE=Release \
       -D CMAKE_INSTALL_PREFIX=/usr/local \
       -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
@@ -93,6 +95,7 @@ cmake -D CMAKE_BUILD_TYPE=Release \
       -D BUILD_PERF_TESTS=OFF \
       -D BUILD_EXAMPLES=OFF \
       ..
+'''
 make -j$(nproc) => Warning: this will take around 30min-1h
 sudo make install
 
