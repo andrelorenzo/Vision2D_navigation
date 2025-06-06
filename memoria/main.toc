@@ -1,0 +1,22 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{\numberline {1}Introducción}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivación}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Herramientas utilizadas}{2}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Desarrollo}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Arquitectura de la comunicación}{3}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Protocolos y Hardware}{3}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Software}{4}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}Modelos para inferencia de datos}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Aceleración y optimización}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Inferencia de la dirección de movimiento}{6}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Interpolación de distancias reales}{6}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Fine tuning del detector de objetos}{6}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Pruebas y resultados}{7}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Pruebas de arquitecturas de comunicación}{7}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Validación de la velocidad de inferencia y benchmarking del algoritmo}{7}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Estabilización de la inferencia de profundidad}{7}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Pruebas de interpolación de distancias}{7}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Prueba en escenario real}{7}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Conclusiones y lineas futuras}{9}{chapter.4}%
+\contentsline {chapter}{Bibliografía}{11}{chapter.4}%
+\contentsline {chapter}{Ap\'{e}ndice \numberline {A}Algoritmos desarrollados}{13}{appendix.1.Alph1}%

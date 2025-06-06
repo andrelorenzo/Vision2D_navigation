@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <termios.h>
+#include <fcntl.h>
 
 #define SERVER_IP   "192.168.4.1"
 #define SERVER_PORT 8888
@@ -36,13 +38,25 @@ cv::Mat get_frame_from_tcp(int sock) {
     return cv::imdecode(imgBuffer, cv::IMREAD_COLOR);
 }
 
+// Configura la terminal para lectura no bloqueante (tecla sin Enter)
+void setNonBlockingTerminal(bool enable) {
+    static struct termios oldt, newt;
+    if (enable) {
+        tcgetattr(STDIN_FILENO, &oldt);
+        newt = oldt;
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    } else {
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    }
+}
+
 int main() {
     const int num_images = 10;
-    const int wait_ms = 2000;
-    const cv::Size pattern_size(9, 6);
-    const float square_size = 0.025f;
+    const cv::Size pattern_size(8, 6);
+    const float square_size = 0.028f;
 
-    // === Conexión TCP ===
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         std::cerr << "Error al crear socket TCP.\n";
@@ -70,39 +84,51 @@ int main() {
             objp.emplace_back(j * square_size, i * square_size, 0.0f);
 
     int collected = 0;
+    std::cout << "Vista previa activa. Pulsa Enter para capturar, ESC para salir.\n";
 
-    std::cout << "Buscando patrón de ajedrez...\n";
+    setNonBlockingTerminal(true); // activar modo no bloqueante de lectura
 
     while (collected < num_images) {
         cv::Mat frame = get_frame_from_tcp(sock);
         if (frame.empty()) continue;
 
-        cv::Mat gray;
-        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-        std::vector<cv::Point2f> corners;
+        cv::imshow("Vista previa", frame);
+        int key = cv::waitKey(1); // muestra imagen
 
-        bool found = cv::findChessboardCorners(gray, pattern_size, corners,
-                        cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE);
+        char ch;
+        if (read(STDIN_FILENO, &ch, 1) > 0) {
+            if (ch == 27) break; // ESC
+            if (ch == '\n') {
+                cv::Mat gray;
+                cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+                std::vector<cv::Point2f> corners;
 
-        if (found) {
-            cv::cornerSubPix(gray, corners, cv::Size(11, 11), cv::Size(-1, -1),
-                             cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.1));
-            image_points.push_back(corners);
-            object_points.push_back(objp);
-            cv::drawChessboardCorners(frame, pattern_size, corners, found);
-            collected++;
-            std::cout << "Captura válida " << collected << "/" << num_images << "\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+                bool found = cv::findChessboardCorners(gray, pattern_size, corners,
+                                cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE);
+
+                if (found) {
+                    cv::cornerSubPix(gray, corners, cv::Size(11, 11), cv::Size(-1, -1),
+                                     cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.1));
+                    image_points.push_back(corners);
+                    object_points.push_back(objp);
+                    cv::drawChessboardCorners(frame, pattern_size, corners, found);
+                    std::cout << "Captura válida " << ++collected << "/" << num_images << "\n";
+                } else {
+                    std::cout << "Patrón no detectado.\n";
+                }
+            }
         }
-
-        cv::imshow("Captura TCP", frame);
-        if (cv::waitKey(30) == 27) break; // ESC para salir
     }
 
+    setNonBlockingTerminal(false); // restaurar terminal
     close(sock);
     cv::destroyAllWindows();
 
-    // === Calibración ===
+    if (image_points.size() < 3) {
+        std::cerr << "No se capturaron suficientes imágenes válidas.\n";
+        return 1;
+    }
+
     cv::Mat camera_matrix, dist_coeffs;
     std::vector<cv::Mat> rvecs, tvecs;
     double rms = cv::calibrateCamera(object_points, image_points, pattern_size,

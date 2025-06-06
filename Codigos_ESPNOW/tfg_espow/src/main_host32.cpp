@@ -89,7 +89,7 @@ void save_image_to_spiffs() {
 }
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
   if (!SPIFFS.begin(true)) {
     Serial.println("Error inicializando SPIFFS");
     return;

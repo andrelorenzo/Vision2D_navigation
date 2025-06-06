@@ -99,13 +99,13 @@ int main(int argc, char** argv) {
     }
 
     // === Cargar modelo YOLOv11 ===
-    YOLOv11 model("../models/yolo11n.onnx", 0.45f, 0.45f,
+    YOLOv11 model("../models/yolo/yolo11n.onnx", 0.45f, 0.45f,
         [](int lbl_id, const std::string& lbl) {
-            return lbl_id >= 0 && lbl_id <= 16;
+            return lbl_id >= 0;
         });
 
     // === Cargar modelo MiDaS ===
-    cv::dnn::Net midas = cv::dnn::readNet("../models/model-small.onnx");
+    cv::dnn::Net midas = cv::dnn::readNet("../models/midas/model-small.onnx");
     midas.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
     midas.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
 
@@ -192,6 +192,7 @@ int main(int argc, char** argv) {
             std::cout << "Tiempo total por frame: " << avg_total << " ms\n";
             std::cout << "→ MiDaS: " << avg_midas << " ms\n";
             std::cout << "→ YOLO : " << avg_yolo  << " ms\n";
+            std::cout << "\033[2J\033[1;1H";    
 
             total_time = midas_time = yolo_time = 0.0;
         }

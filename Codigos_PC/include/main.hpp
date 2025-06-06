@@ -33,23 +33,32 @@
 #define MIN_TRHS 1
 
 // frame mutex
-extern std::mutex frame_mutex;
+// extern std::mutex frame_mutex;
 extern std::condition_variable frame_cv;
-extern cv::Mat shared_frame;
+// extern cv::Mat shared_frame;
 
 // camera buffer
 extern cv::Mat buffer_depth[2];
 extern cv::Mat buffer_yolo[2];
 extern std::atomic<int> frame_index;
-extern bool buffer_full;
+// extern bool buffer_full;
 
 
-extern std::atomic<bool> new_frame_ready, stop_flag;
+// extern std::atomic<bool> new_frame_ready;
+extern std::atomic<bool> stop_flag;
 extern cv::Mat current_depth;
 extern std::vector<ObjectBBox> current_detections;
 extern std::atomic<int> threads_done;
 extern std::mutex threads_mutex;
 extern std::condition_variable threads_cv;
+
+// new adition
+extern cv::Mat depth_scaled_for_debug;
+extern cv::Mat shared_frame;
+extern std::mutex frame_mutex;
+extern bool new_frame_ready ;
+extern bool buffer_full;
+
 
 using DepthModel = std::variant<cv::dnn::Net, torch::jit::script::Module>;
 using DepthEstimationFn = std::function<cv::Mat(DepthModel&, const cv::Mat&)>;

@@ -7,7 +7,7 @@
 #define HEADER1 0xA5
 #define HEADER2 0x5A
 #define SERIAL_PORT "/dev/ttyUSB0"
-#define BAUDRATE 250000
+#define BAUDRATE 115200
 
 // Devuelve tiempo actual en milisegundos
 unsigned long getTimeMs() {
@@ -45,15 +45,18 @@ bool readBytes(serialib& serial, std::vector<uint8_t>& buffer, size_t size, unsi
 
 int main() {
     serialib serial;
-    const char* port = SERIAL_PORT;  // Cambia al puerto adecuado
+    const char* port = SERIAL_PORT;
 
-    if (serial.openDevice(port, BAUDRATE) != 1) {
-        std::cerr << "No se pudo abrir el puerto: " << port << std::endl;
+    int result = serial.openDevice(SERIAL_PORT, BAUDRATE);
+    if (result != 1) {
+        std::cerr << "Error al abrir el puerto: " << SERIAL_PORT << ", código: " << result << std::endl;
         return 1;
     }
 
+    std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
+
     while (true) {
-        std::cout << "\nEsperando cabecera..." << std::endl;
+        // std::cout << "\nEsperando cabecera..." << std::endl;
         if (!waitForHeader(serial)) {
             std::cerr << "No se detectó cabecera válida. Reintentando...\n";
             continue;
@@ -79,6 +82,15 @@ int main() {
             std::cerr << "[ERROR] Imagen corrupta o incompleta.\n";
             continue;
         }
+
+        // Medición de tiempo transcurrido
+        auto currentFrameTime = std::chrono::steady_clock::now();
+        auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime).count();
+        lastFrameTime = currentFrameTime;
+
+        double fps = (durationMs > 0) ? (1000.0 / durationMs) : 0.0;
+        std::cout << "Tiempo desde último frame: " << durationMs << " ms, FPS: " << fps << std::endl;
+        std::cout << "\033[2J\033[1;1H";
 
         cv::imshow("Imagen recibida", img);
         if (cv::waitKey(1) == 27) break;  // Tecla ESC para salir

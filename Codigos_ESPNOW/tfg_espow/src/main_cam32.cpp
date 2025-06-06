@@ -4,7 +4,7 @@
 #include <esp_camera.h>
 #include <SPIFFS.h>
 #include "Arduino.h"
-#include "camera_pins.h"
+#include "configuration.h"
 
 // ESP-NOW
 uint8_t master_mac[] = {0xA0, 0xB7, 0x65, 0x4A, 0x7B, 0xD8};

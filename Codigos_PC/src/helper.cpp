@@ -78,15 +78,26 @@ cv::Mat normalize_depth_with_percentile(const cv::Mat& input, float lower_percen
     cv::threshold(normalized, normalized, 0.0, 0.0, cv::THRESH_TOZERO);
     return normalized;
 }
-void exponential_smoothing(const cv::Mat& current, cv::Mat& filtered, float alpha) {
+// void exponential_smoothing(const cv::Mat& current, cv::Mat& filtered, float alpha) {
+//     CV_Assert(current.type() == CV_32F);
+
+//     if (filtered.empty()) {
+//         filtered = current.clone();
+//     } else {
+//         filtered = alpha * filtered + (1.0f - alpha) * current;
+//     }
+// }
+
+cv::Mat exponential_smoothing(const cv::Mat current, cv::Mat future, float alpha) {
     CV_Assert(current.type() == CV_32F);
 
-    if (filtered.empty()) {
-        filtered = current.clone();
+    if (future.empty()) {
+        return current.clone();
     } else {
-        filtered = alpha * filtered + (1.0f - alpha) * current;
+        return alpha * current + (1.0f - alpha) * future;
     }
 }
+
 void scale_depth_map(cv::Mat& depth_map, float depth_reference_m, float midas_value_reference) {
     if (depth_map.empty() || depth_map.type() != CV_32F || midas_value_reference < 1e-6f)
         return;
