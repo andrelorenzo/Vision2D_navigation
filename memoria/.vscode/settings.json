@@ -7,8 +7,11 @@
     "André",
     "CUDA",
     "evitación",
+    "extrapolación",
+    "Extrapolación",
     "Kbps",
     "Mbps",
+    "odometría",
     "onnx",
     "Pytorch"
   ],
@@ -23,5 +26,5 @@
   "editor.rulers": [100],
   "editor.wordWrap": "on",
   "editor.wordWrapColumn": 100,
-  "editor.wrappingIndent": "same"
+  "editor.wrappingIndent": "same",
 }

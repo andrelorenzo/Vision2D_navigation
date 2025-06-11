@@ -1,16 +1,5 @@
 #include "helper.hpp"
 
-void signal_thread_done() {
-    std::lock_guard<std::mutex> lock(threads_mutex);
-    threads_done++;
-    threads_cv.notify_one();
-}
-
-void wait_for_threads(int required) {
-    std::unique_lock<std::mutex> lock(threads_mutex);
-    threads_cv.wait(lock, [&] { return threads_done.load() >= required; });
-}   
-
 bool recvAll(int sock, uint8_t* buffer, size_t length) {
     size_t total = 0;
     while (total < length) {
@@ -22,6 +11,9 @@ bool recvAll(int sock, uint8_t* buffer, size_t length) {
 }
 
 cv::Mat get_frame_from_tcp(int sock) {
+#ifdef PROF
+    InstrumentationTimer timer("get_frame_from_tcp");
+#endif
     send(sock, CAPTURE_CMD, 4, 0);
 
     uint8_t sizeBytes[4];
@@ -37,12 +29,18 @@ cv::Mat get_frame_from_tcp(int sock) {
 }
 
 cv::Mat get_frame_from_camera(cv::VideoCapture& cap) {
+#ifdef PROF
+    InstrumentationTimer timer("get_frame_from_camera");
+#endif
     cv::Mat frame;
     cap >> frame;
     return frame;
 }
 
 cv::Mat normalize_depth_with_percentile(const cv::Mat& input, float lower_percent, float upper_percent ) {
+#ifdef PROF
+    InstrumentationTimer timer("normalize_depth_with_percentile");
+#endif
     CV_Assert(input.type() == CV_32F);
 
     // Aplanar y filtrar valores válidos
@@ -89,6 +87,9 @@ cv::Mat normalize_depth_with_percentile(const cv::Mat& input, float lower_percen
 // }
 
 cv::Mat exponential_smoothing(const cv::Mat current, cv::Mat future, float alpha) {
+#ifdef PROF
+    InstrumentationTimer timer("exponential_smoothing");
+#endif
     CV_Assert(current.type() == CV_32F);
 
     if (future.empty()) {
@@ -99,6 +100,9 @@ cv::Mat exponential_smoothing(const cv::Mat current, cv::Mat future, float alpha
 }
 
 void scale_depth_map(cv::Mat& depth_map, float depth_reference_m, float midas_value_reference) {
+#ifdef PROF
+    InstrumentationTimer timer("scale_depth_map");
+#endif
     if (depth_map.empty() || depth_map.type() != CV_32F || midas_value_reference < 1e-6f)
         return;
 
@@ -115,17 +119,23 @@ void scale_depth_map(cv::Mat& depth_map, float depth_reference_m, float midas_va
 float estimate_distance_from_yolo(const ObjectBBox& det,
                                   const std::unordered_map<std::string, std::pair<float, float>>& sizes,
                                   float focal_px) {
+#ifdef PROF
+    InstrumentationTimer timer("estimate_distance_from_yolo");
+#endif
     auto it = sizes.find(det.label);
     if (it == sizes.end()) return -1.0f;
 
     float height_real = it->second.first;  // Altura real en metros
     float height_px = std::abs(det.y2 - det.y1);
-    if (height_px <= 0.0f) return -1.0f;
+    if (height_px <= 0.0f) return - 1.0f;
 
     return focal_px * height_real / height_px;
 }
 
 std::unordered_map<std::string, std::pair<float, float>> load_object_sizes(const std::string& filename) {
+#ifdef PROF
+    InstrumentationTimer timer("load_object_sizes");
+#endif
     std::unordered_map<std::string, std::pair<float, float>> object_sizes;
     std::ifstream infile(filename);
     std::string line;
@@ -141,6 +151,9 @@ std::unordered_map<std::string, std::pair<float, float>> load_object_sizes(const
     return object_sizes;
 }
 void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
+#ifdef PROF
+    InstrumentationTimer timer("draw_mean_slope_arrow_sobel");
+#endif
     if (depth_map_input.empty()) {
         std::cout << "[DEBUG] Depth map is empty\n";
         return;
@@ -156,7 +169,7 @@ void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
     // Imprimir min/max reales
     double minVal, maxVal;
     cv::minMaxLoc(depth_map, &minVal, &maxVal);
-    std::cout << "[DEPTH RANGE] min: " << minVal << ", max: " << maxVal << "\n";
+    // std::cout << "[DEPTH RANGE] min: " << minVal << ", max: " << maxVal << "\n";
 
     // Preprocesado básico
     cv::patchNaNs(depth_map, 0.0);
@@ -231,6 +244,9 @@ cv::Mat estimate_depth_map(torch::jit::script::Module& model, const cv::Mat& fra
                            const std::vector<float>& mean,
                            const std::vector<float>& std,
                            bool swapRB, bool crop) {
+#ifdef PROF
+    InstrumentationTimer timer("estimate_depth_map");
+#endif
     torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
     torch::NoGradGuard no_grad;
 
@@ -271,6 +287,9 @@ cv::Mat estimate_depth_map(cv::dnn::Net& net, const cv::Mat& frame,
                            const std::vector<float>& mean = {},
                            const std::vector<float>& std = {},
                            bool swapRB = true, bool crop = false) {
+#ifdef PROF
+    InstrumentationTimer timer("estimate_depth_map_dnn");
+#endif
     if (frame.empty()) {
         throw std::runtime_error("Empty input frame.");
     }
@@ -374,7 +393,10 @@ void annotate_with_depth(cv::Mat& frame,
                          std::vector<ObjectBBox>& detections,
                          const std::unordered_map<std::string, std::pair<float, float>>& object_sizes,
                          bool& depth_scaled_flag) {
-    const float focal_px = 500.0f;  // Estimación de focal (ajustable si calibras)
+#ifdef PROF
+    InstrumentationTimer timer("annotate_with_depth");
+#endif
+    const float focal_px = 500.0f;//1472.768f;  // Estimación de focal (ajustable si calibras)
 
     cv::resize(depth_map, depth_map, frame.size());
     CV_Assert(depth_map.size() == frame.size());
@@ -413,7 +435,7 @@ void annotate_with_depth(cv::Mat& frame,
 
         bbox.draw(frame);
         cv::putText(frame, label.str(), cv::Point(x1, y1 - 5),
-                    cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
+                    cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255   , 0, 0), 3);
     }
 }
 

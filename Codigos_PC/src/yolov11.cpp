@@ -1,10 +1,14 @@
 #include "yolov11.hpp"
 #include "debug.hpp"
-#define CUDA_ACC // for yolo
+#include "profiler.hpp"
+
+// #define CUDA_ACC
+// #define OPENCL_ACC
 
 ObjectBBox::ObjectBBox(const std::string &lbl, float conf_, float cx, float cy, float w, float h, float scale_x, float scale_y)
     : label(lbl), conf(conf_)
 {
+
     // Convert from center coordinates to top-left coordinates
     x1 = (cx - w / 2) * scale_x;
     y1 = (cy - h / 2) * scale_y;
@@ -15,6 +19,7 @@ ObjectBBox::ObjectBBox(const std::string &lbl, float conf_, float cx, float cy, 
 
 cv::Mat ObjectBBox::draw(cv::Mat &img) const
 {
+
     cv::rectangle(img, rect, cv::Scalar(0, 255, 0), 2);
     cv::putText(img, label + " " + std::to_string(conf).substr(0, 4),
                 cv::Point(rect.x, rect.y - 5),
@@ -24,6 +29,7 @@ cv::Mat ObjectBBox::draw(cv::Mat &img) const
 
 float calculateIoU(const ObjectBBox &box1, const ObjectBBox &box2)
 {
+
     auto intersection = box1.rect & box2.rect;
     if (intersection.empty())
         return 0.0f;
@@ -108,6 +114,9 @@ YOLOv11::YOLOv11(
 
 cv::Mat YOLOv11::preprocess(const cv::Mat &image)
 {
+#ifdef PROF
+    InstrumentationTimer timer("preprocess");
+#endif
     cv::Mat resized;
     cv::resize(image, resized, input_size_);
     DEBUG_PRINT_MAT_SHAPE(resized);
@@ -121,6 +130,7 @@ cv::Mat YOLOv11::preprocess(const cv::Mat &image)
 
 std::vector<ObjectBBox> YOLOv11::postprocess(const cv::Mat &output, const cv::Size &original_size)
 {
+
     DEBUG_PRINT_MAT_SHAPE(output);
     assert(output.dims == 2 && output.cols > 0 &&
            output.rows == (4 + class_names_.size()) &&
@@ -206,6 +216,9 @@ std::vector<ObjectBBox> YOLOv11::postprocess(const cv::Mat &output, const cv::Si
 
 std::vector<ObjectBBox> YOLOv11::detect(const cv::Mat &image)
 {
+#ifdef PROF
+    InstrumentationTimer timer("YOLOv11::detect");
+#endif
     assert(!image.empty() && image.type() == CV_8UC3 && "Invalid input image");
     cv::Size original_size = image.size();
 

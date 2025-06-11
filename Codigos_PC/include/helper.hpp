@@ -2,11 +2,6 @@
 
 #include "main.hpp"
 
-
-// treahds
-void signal_thread_done();
-void wait_for_threads(int required);
-
 // camera
 bool recvAll(int sock, uint8_t* buffer, size_t length);
 cv::Mat get_frame_from_tcp(int sock);
