@@ -23,6 +23,7 @@
         "unordered_map": "cpp",
         "vector": "cpp",
         "exception": "cpp",
+        "cmake.cmakePath": "C:/Program Files/CMake/bin/cmake.exe",
         "algorithm": "cpp",
         "functional": "cpp",
         "iterator": "cpp",
@@ -86,5 +87,5 @@
         "slist": "cpp",
         "cfenv": "cpp"
     },
-    "C_Cpp.default.compilerPath": "/usr/bin/g++-11"
+    "C_Cpp.default.compilerPath": "cl.exe"
 }

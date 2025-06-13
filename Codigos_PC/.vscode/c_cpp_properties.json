@@ -1,23 +1,23 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "/usr/local/include/opencv4/",
-                "${workspaceFolder}/libs/libtorch/include"
-                
+                "C:/opencv/build/include",
+                "C:/libtorch/libtorch/include"
             ],
             "defines": [
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "/usr/bin/g++-11",
+            "compilerPath": "cl.exe",
             "cStandard": "c23",
             "cppStandard": "c++20",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4
 }
+
