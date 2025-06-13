@@ -16,13 +16,12 @@
 \contentsline {section}{\numberline {2.4}Inferencia de la dirección de movimiento}{9}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Interpolación de las distancias reales}{12}{section.2.5}%
 \contentsline {chapter}{\numberline {3}Pruebas y resultados}{17}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Pruebas de arquitecturas de comunicación}{17}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Validación de la velocidad de inferencia y benchmarking del algoritmo}{17}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Sin multi-threading, sin GPU}{17}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Con multi-threading, los 2 modelos en la CPU}{18}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}Con multi-threading, los 2 modelos en la GPU}{18}{subsection.3.2.3}%
-\contentsline {subsection}{\numberline {3.2.4}Con multi-threading, YOLO en la GPU y MiDaS en la CPU}{19}{subsection.3.2.4}%
-\contentsline {subsection}{\numberline {3.2.5}Con multi-threading, MiDaS en la GPU y YOLO en la CPU}{19}{subsection.3.2.5}%
-\contentsline {section}{\numberline {3.3}Estabilización de la inferencia de profundidad}{20}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Pruebas de interpolación de distancias}{20}{section.3.4}%
-\contentsline {chapter}{\numberline {4}Conclusiones y lineas futuras}{21}{chapter.4}%
+\contentsline {section}{\numberline {3.1}Validación de la velocidad de inferencia y benchmarking del algoritmo}{17}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Sin multi-threading, sin GPU}{17}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Con multi-threading, los 2 modelos en la CPU}{18}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Con multi-threading, los 2 modelos en la GPU}{18}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}Con multi-threading, YOLO en la GPU y MiDaS en la CPU}{19}{subsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.1.5}Con multi-threading, MiDaS en la GPU y YOLO en la CPU}{19}{subsection.3.1.5}%
+\contentsline {section}{\numberline {3.2}Estabilización de la inferencia de profundidad}{20}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Pruebas de interpolación de distancias}{21}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Conclusiones y lineas futuras}{25}{chapter.4}%

@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.5.4)  11 JUN 2025 22:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.5.4)  13 JUN 2025 15:45
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/andrelorent/programming/Vision2D_navigation/memoria/main.tex
-(/home/andrelorent/programming/Vision2D_navigation/memoria/main.tex
+**/home/andrelorent/Programming/Vision2D_navigation/memoria/main.tex
+(/home/andrelorent/Programming/Vision2D_navigation/memoria/main.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-01-21> (/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
 Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
@@ -883,6 +883,10 @@ Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
 \ALG@tmplength=\skip91
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
+) (/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2020/10/07 v1.3j Sub-captions (AR)
+\c@subfigure=\count466
+\c@subtable=\count467
 )) (./datos.tex)
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
@@ -955,23 +959,23 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ) (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count466
+\c@section@level=\count468
 )
 LaTeX Info: Redefining \ref on input line 10.
 LaTeX Info: Redefining \pageref on input line 10.
 LaTeX Info: Redefining \nameref on input line 10.
  (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count467
+\scratchcounter=\count469
 \scratchdimen=\dimen295
 \scratchbox=\box90
-\nofMPsegments=\count468
-\nofMParguments=\count469
+\nofMPsegments=\count470
+\nofMParguments=\count471
 \everyMPshowfont=\toks45
-\MPscratchCnt=\count470
+\MPscratchCnt=\count472
 \MPscratchDim=\dimen296
-\MPnumerator=\count471
-\makeMPintoPDFobject=\count472
+\MPnumerator=\count473
+\makeMPintoPDFobject=\count474
 \everyMPtoPDFconversion=\toks46
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -1081,7 +1085,7 @@ LaTeX Info: Redefining \% on input line 103.
 LaTeX Info: Redefining \. on input line 139.
 LaTeX Info: Redefining \% on input line 139.
  [5]
-<images/midas_test.png, id=122, 644.4075pt x 482.80376pt>
+<images/midas_test.png, id=120, 644.4075pt x 482.80376pt>
 File: images/midas_test.png Graphic file (type png)
 <use images/midas_test.png>
 Package pdftex.def Info: images/midas_test.png  used on input line 166.
@@ -1092,7 +1096,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 LaTeX Info: Redefining \. on input line 170.
 LaTeX Info: Redefining \% on input line 170.
  [6]
-<images/depth_any_test.png, id=129, 644.4075pt x 482.80376pt>
+<images/depth_any_test.png, id=127, 644.4075pt x 482.80376pt>
 File: images/depth_any_test.png Graphic file (type png)
 <use images/depth_any_test.png>
 Package pdftex.def Info: images/depth_any_test.png  used on input line 173.
@@ -1100,7 +1104,7 @@ Package pdftex.def Info: images/depth_any_test.png  used on input line 173.
 LaTeX Info: Redefining \. on input line 180.
 LaTeX Info: Redefining \% on input line 180.
  [7 <./images/midas_test.png> <./images/depth_any_test.png>]
-<images/profiling_midas_yolo.png, id=137, 1679.27374pt x 255.95625pt>
+<images/profiling_midas_yolo.png, id=135, 1679.27374pt x 255.95625pt>
 File: images/profiling_midas_yolo.png Graphic file (type png)
 <use images/profiling_midas_yolo.png>
 Package pdftex.def Info: images/profiling_midas_yolo.png  used on input line 198.
@@ -1108,7 +1112,7 @@ Package pdftex.def Info: images/profiling_midas_yolo.png  used on input line 198
 LaTeX Info: Redefining \. on input line 206.
 LaTeX Info: Redefining \% on input line 206.
  [8 <./images/profiling_midas_yolo.png>]
-<images/midas_midas.png, id=149, 642.4pt x 521.95pt>
+<images/midas_midas.png, id=147, 642.4pt x 521.95pt>
 File: images/midas_midas.png Graphic file (type png)
 <use images/midas_midas.png>
 Package pdftex.def Info: images/midas_midas.png  used on input line 219.
@@ -1119,22 +1123,22 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 LaTeX Info: Redefining \. on input line 223.
 LaTeX Info: Redefining \% on input line 223.
  [9]
-<images/get_dir_body1.png, id=161, 644.4075pt x 482.80376pt>
+<images/get_dir_body1.png, id=159, 644.4075pt x 482.80376pt>
 File: images/get_dir_body1.png Graphic file (type png)
 <use images/get_dir_body1.png>
 Package pdftex.def Info: images/get_dir_body1.png  used on input line 232.
 (pdftex.def)             Requested size: 223.07211pt x 167.12737pt.
-<images/get_dir_background2.png, id=162, 644.4075pt x 482.80376pt>
+<images/get_dir_background2.png, id=160, 644.4075pt x 482.80376pt>
 File: images/get_dir_background2.png Graphic file (type png)
 <use images/get_dir_background2.png>
 Package pdftex.def Info: images/get_dir_background2.png  used on input line 239.
 (pdftex.def)             Requested size: 223.07211pt x 167.12737pt.
-<images/get_dir_nomove3.png, id=163, 644.4075pt x 482.80376pt>
+<images/get_dir_nomove3.png, id=161, 644.4075pt x 482.80376pt>
 File: images/get_dir_nomove3.png Graphic file (type png)
 <use images/get_dir_nomove3.png>
 Package pdftex.def Info: images/get_dir_nomove3.png  used on input line 248.
 (pdftex.def)             Requested size: 223.07211pt x 167.12737pt.
-<images/get_dir_wall4.png, id=164, 644.4075pt x 482.80376pt>
+<images/get_dir_wall4.png, id=162, 644.4075pt x 482.80376pt>
 File: images/get_dir_wall4.png Graphic file (type png)
 <use images/get_dir_wall4.png>
 Package pdftex.def Info: images/get_dir_wall4.png  used on input line 255.
@@ -1152,7 +1156,7 @@ LaTeX Info: Redefining \% on input line 267.
 LaTeX Info: Redefining \. on input line 304.
 LaTeX Info: Redefining \% on input line 304.
  [12]
-<images/gsd_drone_example.jpg, id=191, 803.0pt x 803.0pt>
+<images/gsd_drone_example.jpg, id=189, 803.0pt x 803.0pt>
 File: images/gsd_drone_example.jpg Graphic file (type jpg)
 <use images/gsd_drone_example.jpg>
 Package pdftex.def Info: images/gsd_drone_example.jpg  used on input line 351.
@@ -1163,7 +1167,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 LaTeX Info: Redefining \. on input line 355.
 LaTeX Info: Redefining \% on input line 355.
  [13]
-<images/calibracion_ajedrez.png, id=204, 948.54375pt x 579.66562pt>
+<images/calibracion_ajedrez.png, id=202, 948.54375pt x 579.66562pt>
 File: images/calibracion_ajedrez.png Graphic file (type png)
 <use images/calibracion_ajedrez.png>
 Package pdftex.def Info: images/calibracion_ajedrez.png  used on input line 376.
@@ -1172,60 +1176,135 @@ Package pdftex.def Info: images/calibracion_ajedrez.png  used on input line 376.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/extrapolacion_taza.png, id=206, 1401.235pt x 527.9725pt>
+<images/extrapolacion_taza.png, id=204, 1401.235pt x 527.9725pt>
 File: images/extrapolacion_taza.png Graphic file (type png)
 <use images/extrapolacion_taza.png>
-Package pdftex.def Info: images/extrapolacion_taza.png  used on input line 390.
+Package pdftex.def Info: images/extrapolacion_taza.png  used on input line 392.
 (pdftex.def)             Requested size: 409.71692pt x 154.37292pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-LaTeX Info: Redefining \. on input line 398.
-LaTeX Info: Redefining \% on input line 398.
+LaTeX Info: Redefining \. on input line 400.
+LaTeX Info: Redefining \% on input line 400.
 [14 <./images/gsd_drone_example.jpg>]
-LaTeX Info: Redefining \. on input line 398.
-LaTeX Info: Redefining \% on input line 398.
+LaTeX Info: Redefining \. on input line 400.
+LaTeX Info: Redefining \% on input line 400.
  [15 <./images/calibracion_ajedrez.png (PNG copy)> <./images/extrapolacion_taza.png>] [16
 
 ]
 Cap\'{\i }tulo 3.
 [17]
-<images/2cpu_prof.png, id=229, 1222.5675pt x 342.27875pt>
+<images/2cpu_prof.png, id=227, 1222.5675pt x 342.27875pt>
 File: images/2cpu_prof.png Graphic file (type png)
 <use images/2cpu_prof.png>
-Package pdftex.def Info: images/2cpu_prof.png  used on input line 446.
+Package pdftex.def Info: images/2cpu_prof.png  used on input line 450.
 (pdftex.def)             Requested size: 318.66948pt x 89.21494pt.
-<images/2gpu_prof.png, id=230, 1281.78876pt x 342.27875pt>
+<images/2gpu_prof.png, id=228, 1281.78876pt x 342.27875pt>
 File: images/2gpu_prof.png Graphic file (type png)
 <use images/2gpu_prof.png>
-Package pdftex.def Info: images/2gpu_prof.png  used on input line 474.
+Package pdftex.def Info: images/2gpu_prof.png  used on input line 478.
 (pdftex.def)             Requested size: 318.66948pt x 85.0942pt.
 
 Underfull \vbox (badness 6792) has occurred while \output is active []
 
-LaTeX Info: Redefining \. on input line 498.
-LaTeX Info: Redefining \% on input line 498.
+LaTeX Info: Redefining \. on input line 500.
+LaTeX Info: Redefining \% on input line 500.
  [18 <./images/2cpu_prof.png> <./images/2gpu_prof.png>]
-<images/ygpu_mcpu_prof.png, id=241, 1129.21875pt x 398.48875pt>
+<images/ygpu_mcpu_prof.png, id=239, 1129.21875pt x 398.48875pt>
 File: images/ygpu_mcpu_prof.png Graphic file (type png)
 <use images/ygpu_mcpu_prof.png>
-Package pdftex.def Info: images/ygpu_mcpu_prof.png  used on input line 502.
+Package pdftex.def Info: images/ygpu_mcpu_prof.png  used on input line 504.
 (pdftex.def)             Requested size: 318.66948pt x 112.45775pt.
-<images/mgpu_ycpu_prof.png, id=242, 1354.05875pt x 342.27875pt>
+<images/mgpu_ycpu_prof.png, id=240, 1354.05875pt x 342.27875pt>
 File: images/mgpu_ycpu_prof.png Graphic file (type png)
 <use images/mgpu_ycpu_prof.png>
-Package pdftex.def Info: images/mgpu_ycpu_prof.png  used on input line 530.
+Package pdftex.def Info: images/mgpu_ycpu_prof.png  used on input line 532.
 (pdftex.def)             Requested size: 318.66948pt x 80.5504pt.
-LaTeX Info: Redefining \. on input line 536.
-LaTeX Info: Redefining \% on input line 536.
+LaTeX Info: Redefining \. on input line 538.
+LaTeX Info: Redefining \% on input line 538.
  [19 <./images/ygpu_mcpu_prof.png> <./images/mgpu_ycpu_prof.png>]
-LaTeX Info: Redefining \. on input line 540.
-LaTeX Info: Redefining \% on input line 540.
- [20]
-Cap\'{\i }tulo 4.
-) [21
+<images/no_filter/frame_00000.png, id=253, 645.41125pt x 519.9425pt>
+File: images/no_filter/frame_00000.png Graphic file (type png)
+<use images/no_filter/frame_00000.png>
+Package pdftex.def Info: images/no_filter/frame_00000.png  used on input line 547.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/no_filter/frame_00008.png, id=254, 645.41125pt x 519.9425pt>
+File: images/no_filter/frame_00008.png Graphic file (type png)
+<use images/no_filter/frame_00008.png>
+Package pdftex.def Info: images/no_filter/frame_00008.png  used on input line 551.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/no_filter/frame_00016.png, id=255, 645.41125pt x 519.9425pt>
+File: images/no_filter/frame_00016.png Graphic file (type png)
+<use images/no_filter/frame_00016.png>
+Package pdftex.def Info: images/no_filter/frame_00016.png  used on input line 555.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/no_filter/frame_00022.png, id=256, 645.41125pt x 519.9425pt>
+File: images/no_filter/frame_00022.png Graphic file (type png)
+<use images/no_filter/frame_00022.png>
+Package pdftex.def Info: images/no_filter/frame_00022.png  used on input line 559.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/filter_a025/frame_00000.png, id=257, 645.41125pt x 519.9425pt>
+File: images/filter_a025/frame_00000.png Graphic file (type png)
+<use images/filter_a025/frame_00000.png>
+Package pdftex.def Info: images/filter_a025/frame_00000.png  used on input line 569.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/filter_a025/frame_00008.png, id=258, 645.41125pt x 519.9425pt>
+File: images/filter_a025/frame_00008.png Graphic file (type png)
+<use images/filter_a025/frame_00008.png>
+Package pdftex.def Info: images/filter_a025/frame_00008.png  used on input line 573.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/filter_a025/frame_00016.png, id=259, 645.41125pt x 519.9425pt>
+File: images/filter_a025/frame_00016.png Graphic file (type png)
+<use images/filter_a025/frame_00016.png>
+Package pdftex.def Info: images/filter_a025/frame_00016.png  used on input line 577.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+<images/filter_a025/frame_00024.png, id=260, 645.41125pt x 519.9425pt>
+File: images/filter_a025/frame_00024.png Graphic file (type png)
+<use images/filter_a025/frame_00024.png>
+Package pdftex.def Info: images/filter_a025/frame_00024.png  used on input line 581.
+(pdftex.def)             Requested size: 204.85846pt x 165.02834pt.
+LaTeX Info: Redefining \. on input line 587.
+LaTeX Info: Redefining \% on input line 587.
+ [20 <./images/no_filter/frame_00000.png (PNG copy)> <./images/no_filter/frame_00008.png (PNG copy)> <./images/no_filter/frame_00016.png (PNG copy)> <./images/no_filter/frame_00022.png (PNG copy)>]
+<images/setup_inter.jpeg, id=268, 1132.23pt x 2007.5pt>
+File: images/setup_inter.jpeg Graphic file (type jpg)
+<use images/setup_inter.jpeg>
+Package pdftex.def Info: images/setup_inter.jpeg  used on input line 594.
+(pdftex.def)             Requested size: 182.09486pt x 322.86069pt.
 
-] [22
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 598.
+LaTeX Info: Redefining \% on input line 598.
+ [21 <./images/filter_a025/frame_00000.png (PNG copy)> <./images/filter_a025/frame_00008.png (PNG copy)> <./images/filter_a025/frame_00016.png (PNG copy)> <./images/filter_a025/frame_00024.png (PNG copy)>]
+<images/0objetos_interpolacion.png, id=276, 1333.98375pt x 521.95pt>
+File: images/0objetos_interpolacion.png Graphic file (type png)
+<use images/0objetos_interpolacion.png>
+Package pdftex.def Info: images/0objetos_interpolacion.png  used on input line 603.
+(pdftex.def)             Requested size: 364.19667pt x 142.49734pt.
+<images/1objetos_interpolacion.png, id=278, 1333.98375pt x 521.95pt>
+File: images/1objetos_interpolacion.png Graphic file (type png)
+<use images/1objetos_interpolacion.png>
+Package pdftex.def Info: images/1objetos_interpolacion.png  used on input line 612.
+(pdftex.def)             Requested size: 364.19667pt x 142.49734pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 616.
+LaTeX Info: Redefining \% on input line 616.
+ [22 <./images/setup_inter.jpeg> <./images/0objetos_interpolacion.png>]
+<images/2objetos_interpolacion.png, id=287, 1333.98375pt x 521.95pt>
+File: images/2objetos_interpolacion.png Graphic file (type png)
+<use images/2objetos_interpolacion.png>
+Package pdftex.def Info: images/2objetos_interpolacion.png  used on input line 621.
+(pdftex.def)             Requested size: 364.19667pt x 142.49734pt.
+LaTeX Info: Redefining \. on input line 630.
+LaTeX Info: Redefining \% on input line 630.
+ [23 <./images/1objetos_interpolacion.png> <./images/2objetos_interpolacion.png>] [24
+
+]
+Cap\'{\i }tulo 4.
+) [25] [26
 
 ]
 
@@ -1241,18 +1320,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 36095 strings out of 480112
- 704720 string characters out of 5892632
- 1450597 words of memory out of 5000000
- 53387 multiletter control sequences out of 15000+600000
+ 36275 strings out of 480112
+ 709481 string characters out of 5892632
+ 1452544 words of memory out of 5000000
+ 53544 multiletter control sequences out of 15000+600000
  475955 words of font info for 51 fonts, out of 8000000 for 9000
  85 hyphenation exceptions out of 8191
  89i,13n,83p,1210b,1899s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/andrelorent/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (26 pages, 1481319 bytes).
+Output written on main.pdf (30 pages, 3673351 bytes).
 PDF statistics:
- 428 PDF objects out of 1000 (max. 8388607)
- 339 compressed objects within 4 object streams
- 85 named destinations out of 1000 (max. 500000)
- 322 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 467 PDF objects out of 1000 (max. 8388607)
+ 359 compressed objects within 4 object streams
+ 94 named destinations out of 1000 (max. 500000)
+ 374 words of extra memory for PDF output out of 10000 (max. 10000000)
 

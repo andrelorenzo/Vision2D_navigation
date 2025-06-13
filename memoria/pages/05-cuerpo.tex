@@ -383,6 +383,8 @@ Aquí es donde entra en juego el uso del detector de objetos YOLO v11. Este dete
 
 En la \textbf{figura \ref{fig:taza_extrapolacion}} se puede observar la salida de valores normalizados generada por MiDaS, entre 0 y 1 (derecha), así como su capacidad para interpolar la distancia real (izquierda). Como referencia, la taza se encontraba a 35 cm de la cámara.
 
+Finakmente, el algoritmo de extrapolación extrapola todos los puntos de la imagen, si solo exsite un objeto detectado multiplica la salida de midas por el factor d e escala pero si dedetecta 2 o más objetos ajusta un polinomio de $n-1$ grados (3 tazas implica un polinomio de grado 2) y con el modifica los valores de la salida de midas según el polinomio.
+
 
 
 \begin{figure}[h]
@@ -396,7 +398,9 @@ En la \textbf{figura \ref{fig:taza_extrapolacion}} se puede observar la salida d
 
     % \section{Fine tuning del detector de objetos}
   \chapter{Pruebas y resultados}
-    \section{Pruebas de arquitecturas de comunicación}
+En esta sección se muestran las pruebas y resultados obtenidos para cada sección del proyecto, con el objetivo de validar el correcto funcionamiento de los algoritmos desarrollados. Se incluyen capturas de pantalla, visualizaciones de salida y comparaciones cuantitativas donde corresponde.
+.
+
     \section{Validación de la velocidad de inferencia y benchmarking del algoritmo}
 Para probar y poder comparar las distintas implementaciones que se han probado en el proyecto se realizaron 6 test de performance, donde se midieron el tiempo de cada parte y el total, dando como resultado un frame rate o fps alcanzados. Todos los test se realizaron de la misma manera, primero se hizo un benchmarking del tiempo para MiDaS, YOLO y la captura de la cámara, también del total; Finalmente se realizó un profiling con la herramienta de \textit{google chrome} para visualizar los ciclos de procesamiento más en detalle. En los test se muestra una tabla con los valores y una figura con el benchamarking de cada test. 
 
@@ -476,8 +480,6 @@ Dado que esta implementación no usa multi-threading realizar profiling resulta 
     \label{fig:gpu2_prof}
 \end{figure}
 
-
-
         \subsection{Con multi-threading, YOLO en la GPU y MiDaS en la CPU}
 \begin{table}[H]
     \centering
@@ -535,20 +537,108 @@ Dado que esta implementación no usa multi-threading realizar profiling resulta 
 Como se puede observar la última arquitectura es la más eficiente y rápida por lo que es la que definitivamente se usa en el trabajo, comentar también que dada la naturaleza multi-hilo del sistema y que Linux no sea un sistema \textbf{Real Time} la cuenta de ms en los diferentes test no es perfecta y tiene errores que son difícilmente solucionables, un ejemplo es el último test donde YOLO parece tardar 150 ms cuando en verdad esta tardando la mitad, de todas formas sirve como prueba y análisis de el proceso de un ciclo de procesamiento, también podemos ver como con el ''overhead'' que hemos ido añadiendo provoca que el tiempo de captura de la imagen haya subido y se mantenga  constante al rededor de los 50 ms.
 
     \section{Estabilización de la inferencia de profundidad}
+Este experimento trata de mostrar el impacto que tiene el algoritmo de filtrado exponencial en la iamagen y además msotrar como varía la misma al variar la constante $\alpha$ de ponderación. Dada la dificultad de mostrar videos en este formato se muestran 4 frames consecutivos, donde la \textbf{figura \ref{fig:no_filter}} muestra el ''flickering'' sin filtro ninguno, aunque en el presente documento cueste ver la diferencia, en la práctica el parpadeo es extremadamente notable. En la \text{figura \ref{fig:filter_a025}} se muestra el resultado de aplicar el filtro exponencial con un $\alpha = 0.25$ siendo este el valor que proporciona el mejor resultado.
+
+Además de estos valores se probarón también 0.1, 0.5, 0.75 y 0.98, si el valor de $\alpha$ es muy grande el filtro se ''fia'' demasiado en la salida directa de MiDaS y por tanto parpadeá con mayor intensidad, en cambio si el valor es muy bajo no ponderá bien entre 2 frames y por tanto también pierde eficacia.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/no_filter/frame_00000.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/no_filter/frame_00008.png}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/no_filter/frame_00016.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/no_filter/frame_00022.png}
+    \end{subfigure}
+
+    \caption{Muestra de ''flickering'' sin filtro (frames 1 a 4).}
+    \label{fig:no_filter}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/filter_a025/frame_00000.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/filter_a025/frame_00008.png}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/filter_a025/frame_00016.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{images/filter_a025/frame_00024.png}
+    \end{subfigure}
+
+    \caption{Muestra de ''flickering'' con filtro  y alpha = 0.25(frames 1 a 4).}
+    \label{fig:filter_a025}
+\end{figure}
     \section{Pruebas de interpolación de distancias}
-    % \section{Prueba en escenario real}
+Para este test se evaluó la precisión del algoritmo de interpolación de distancias utilizando 0, 1 y 2 objetos detectados. La prueba se realizó únicamente con una clase conocida (una taza) a la que se le añadió un archivo \textit{.txt} con su información real de ancho y alto en metros, con el siguiente formato: \textit{cup 0.08 0.12}, donde \texttt{0.08} corresponde al ancho y \texttt{0.12} a la altura, ambos en metros.
+
+A continuación se presentan cuatro imágenes que ilustran el correcto funcionamiento del sistema. La \textbf{figura \ref{fig:setup_inter}} muestra el "setup" experimental, donde se puede observar un metro físico para comparar la distancia real con la estimada por el algoritmo. La cámara se colocó pegada a la pared para simular una visión horizontal de la escena, y las tazas se fueron posicionando a distintas distancias no uniformes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth,angle=90]{images/setup_inter.jpeg}
+\caption{Setup para el experimento de interpolación de distancias.}
+\label{fig:setup_inter}
+\end{figure}
+
+La \textbf{figura \ref{fig:0obj_inter}} sirve como imagen de control del experimento. En ella se muestra el resultado del algoritmo cuando no se detecta ningún objeto. Como es de esperar, los valores de profundidad se encuentran entre 0 y 1, lo cual confirma el comportamiento normal del sistema en ausencia de datos de referencia.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/0objetos_interpolacion.png}
+\caption{Interpolación de distancias sin objetos (imagen de control).}
+\label{fig:0obj_inter}
+\end{figure}
+
+En la \textbf{figura \ref{fig:1obj_inter}} se observa cómo el sistema estima las distancias cuando se detecta un solo objeto. El algoritmo ofrece buenos resultados en las proximidades del objeto detectado, pero pierde precisión a medida que se aleja. Por ejemplo, el punto en el primer cuadrante indica 32 metros cuando, en realidad, la pared se encuentra a 2.6 metros. Como referencia, la taza estaba situada a exactamente 0.77 m y la silla a 1.8 m del sensor de la cámara.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/1objetos_interpolacion.png}
+\caption{Interpolación de distancias con 1 objeto.}
+\label{fig:1obj_inter}
+\end{figure}
+
+En la \textbf{figura \ref{fig:2obj_inter}} se muestra el resultado con 2 objetos detectados. Aquí la salida mejora significativamente: la taza sobre la silla se estima a exactamente 1.86 m y la pared del fondo, que antes se estimaba a 32 m, ahora aparece a 2.41 m. Considerando que la distancia real es de 2.6 m, esto representa un error de apenas 20 cm.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/2objetos_interpolacion.png}
+\caption{Interpolación de distancias con 2 objetos.}
+\label{fig:2obj_inter}
+\end{figure}
+
+Del desarrollo del test se pueden extraer varias conclusiones. En primer lugar, el algoritmo logra estimar con un error moderado la distancia real de los objetos en la escena. Sin embargo, presenta ciertas limitaciones. Una de ellas es la dificultad para interpolar correctamente cuando los objetos detectados están muy cerca entre sí, lo cual restringe la interpolación a su vecindad inmediata, como si solo se hubiera detectado un objeto. Otra dificultad importante surge al intentar estimar la profundidad de objetos pequeños situados a gran distancia, ya que estos tienden a no ser detectados. Esto sugiere que, en el futuro, será necesario emplear objetos lo suficientemente grandes para que puedan ser detectados a larga distancia y así obtener una mejor estimación global de la profundidad.
+
+Por último, se identificó una limitación técnica relacionada con el sobrecalentamiento tanto del ordenador como de la cámara, lo cual provoca ralentizaciones, bloqueos temporales en la transmisión de frames y una disminución en la capacidad de detección múltiple.
+
   \chapter{Conclusiones y lineas futuras}
 
 El proyecto ha logrado desarrollar un método fiable, robusto y lo suficientemente rápido como para ser ejecutado en tiempo real. Los resultados de velocidad muestran valores muy cercanos al \textit{frame rate} máximo teórico, determinado por la velocidad de la cámara. Se ha conseguido desarrollar una arquitectura de software estable tanto ante cambios en la iluminación o la posición, como frente al ``flickering'' intrínseco del modelo estimador de profundidad.
 
-El algoritmo de extrapolación de distancia ha sido probado extensamente y presenta un error menor a xxx en todos los casos analizados.
+El algoritmo de extrapolación de distancia ha sido probado extensamente y presenta un error menor a 40 cm para un número  mayor a 2 detecciones y en el rango de metros para solo 1 objeto.
 
 En general, aunque aún existen múltiples posibilidades de mejora, se ha demostrado que el presente proyecto tiene un gran potencial para convertirse en un algoritmo robusto y viable para su uso en drones de bajo coste y con una velocidad moderada de movimiento.
 
-Como líneas futuras, el autor de este proyecto plantea:
+Como líneas futuras, se plantean:
 
 \begin{itemize}
-\item Realizar \textit{fine-tuning} con YOLO para detectar únicamente objetos estáticos y visibles en entornos exteriores.
+\item Realizar \textit{fine-tuning} con YOLO para detectar únicamente objetos estáticos y visibles en entornos exteriores, también que objetos que sea viable ''ver'' tanto por sus semántica como por su tamaño.
 \item Ajustar el sistema para mejorar aún más la precisión en la extrapolación de distancias, perfeccionando la calibración de la cámara y haciendo el algoritmo más robusto frente a excepciones.
 \item Refinar los algoritmos de normalización y filtrado exponencial para aumentar la robustez general.
 \item Aplicar otros métodos de visión, como HOG, para la búsqueda de direcciones de movimiento.

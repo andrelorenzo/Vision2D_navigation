@@ -76,15 +76,6 @@ cv::Mat normalize_depth_with_percentile(const cv::Mat& input, float lower_percen
     cv::threshold(normalized, normalized, 0.0, 0.0, cv::THRESH_TOZERO);
     return normalized;
 }
-// void exponential_smoothing(const cv::Mat& current, cv::Mat& filtered, float alpha) {
-//     CV_Assert(current.type() == CV_32F);
-
-//     if (filtered.empty()) {
-//         filtered = current.clone();
-//     } else {
-//         filtered = alpha * filtered + (1.0f - alpha) * current;
-//     }
-// }
 
 cv::Mat exponential_smoothing(const cv::Mat current, cv::Mat future, float alpha) {
 #ifdef PROF
@@ -99,37 +90,129 @@ cv::Mat exponential_smoothing(const cv::Mat current, cv::Mat future, float alpha
     }
 }
 
-void scale_depth_map(cv::Mat& depth_map, float depth_reference_m, float midas_value_reference) {
-#ifdef PROF
-    InstrumentationTimer timer("scale_depth_map");
-#endif
-    if (depth_map.empty() || depth_map.type() != CV_32F || midas_value_reference < 1e-6f)
-        return;
+bool fit_polynomial(const std::vector<float>& midas_values,
+                    const std::vector<float>& real_distances,
+                    int degree,
+                    cv::Mat& coeffs_out) {
+    if (midas_values.size() != real_distances.size() || midas_values.empty())
+        return false;
 
-    cv::Mat safe_map;
-    cv::max(depth_map, 1e-6f, safe_map);  // evita dividir por cero o valores negativos
+    int N = midas_values.size();
+    cv::Mat A(N, degree + 1, CV_32F);
+    cv::Mat Y(N, 1, CV_32F);
 
-    cv::Mat inverted;
-    cv::divide(1.0f, safe_map, inverted);  // 1 / valor
+    for (int i = 0; i < N; ++i) {
+        float d = std::max(midas_values[i], 1e-6f);  // evitar división por cero
+        float dinv = 1.0f / d;
+        float pow = 1.0f;
+        for (int j = 0; j <= degree; ++j) {
+            A.at<float>(i, j) = pow;
+            pow *= dinv;
+        }
+        Y.at<float>(i, 0) = real_distances[i];
+    }
 
-    float scale_factor = depth_reference_m * midas_value_reference;
-
-    depth_map = inverted * scale_factor;
+    return cv::solve(A, Y, coeffs_out, cv::DECOMP_SVD);
 }
+
+cv::Mat apply_polynomial(const cv::Mat& depth_normalized, const cv::Mat& coeffs) {
+    CV_Assert(depth_normalized.type() == CV_32F);
+    cv::Mat scaled(depth_normalized.size(), CV_32F);
+
+    for (int y = 0; y < depth_normalized.rows; ++y) {
+        for (int x = 0; x < depth_normalized.cols; ++x) {
+            float d = std::max(depth_normalized.at<float>(y, x), 1e-6f);  // evita 1/0
+            float dinv = 1.0f / d;
+
+            float z = 0.0f;
+            float pow = 1.0f;
+            for (int i = 0; i < coeffs.rows; ++i) {
+                z += coeffs.at<float>(i, 0) * pow;
+                pow *= dinv;
+            }
+            scaled.at<float>(y, x) = z;
+        }
+    }
+    return scaled;
+}
+bool calibrate_and_scale_midas(cv::Mat& depth_midas_normalized,
+                               const std::vector<ObjectBBox>& detections,
+                               const std::unordered_map<std::string, std::pair<float, float>>& object_sizes,
+                               cv::Mat& depth_scaled_out) {
+    std::vector<float> midas_vals, real_dists;
+
+    if(detections.empty())return false;
+    for (const auto& bbox : detections) {
+        float z_real = estimate_distance_from_yolo(bbox, object_sizes);
+        if (z_real <= 0.0f) continue;
+
+        int u = static_cast<int>((bbox.x1 + bbox.x2) * 0.5f);
+        int v = static_cast<int>((bbox.y1 + bbox.y2) * 0.5f);
+
+        if (u < 0 || u >= depth_midas_normalized.cols ||
+            v < 0 || v >= depth_midas_normalized.rows) continue;
+
+        float d = depth_midas_normalized.at<float>(v, u);
+        if (d < 1e-4f || !std::isfinite(d)) continue;
+
+        midas_vals.push_back(d);
+        real_dists.push_back(z_real);
+    }
+
+    if (midas_vals.empty()) {
+        return false;
+    }
+
+    if (midas_vals.size() == 1) {
+        float scale = real_dists[0] * midas_vals[0];  // Z_real * d_ref
+        cv::Mat safe;
+        cv::max(depth_midas_normalized, 1e-6f, safe);  // evita división por cero
+        cv::divide(1.0f, safe, depth_scaled_out);
+        depth_scaled_out *= scale;
+        return true;
+    }
+
+
+    // Ajuste polinomial hasta grado permitido por el número de muestras
+    int degree = std::min<int>(MAXPOLY, static_cast<int>(midas_vals.size()) - 1);
+    cv::Mat coeffs;
+    if (!fit_polynomial(midas_vals, real_dists, degree, coeffs)) {
+        return false;
+    }
+    depth_scaled_out = apply_polynomial(depth_midas_normalized, coeffs);
+    return true;
+}
+
+
+
+
+
 float estimate_distance_from_yolo(const ObjectBBox& det,
-                                  const std::unordered_map<std::string, std::pair<float, float>>& sizes,
-                                  float focal_px) {
+                                        const std::unordered_map<std::string, std::pair<float, float>>& sizes) {
 #ifdef PROF
-    InstrumentationTimer timer("estimate_distance_from_yolo");
+    InstrumentationTimer timer("estimate_position_from_yolo");
 #endif
     auto it = sizes.find(det.label);
-    if (it == sizes.end()) return -1.0f;
+    if (it == sizes.end()) return -1.0;
 
-    float height_real = it->second.first;  // Altura real en metros
-    float height_px = std::abs(det.y2 - det.y1);
-    if (height_px <= 0.0f) return - 1.0f;
+    float height_real = it->second.first;  // Altura real del objeto (en metros)
+    float y_top = det.y1;
+    float y_bottom = det.y2;
+    float height_px = std::abs(y_bottom - y_top);
+    if (height_px <= 0.0f) return -1.0;
 
-    return focal_px * height_real / height_px;
+    // Centro de la caja en píxeles
+    float u = 0.5f * (det.x1 + det.x2);  // coordenada horizontal
+    float v = 0.5f * (det.y1 + det.y2);  // coordenada vertical
+
+    // Estimar Z (distancia al objeto)
+    float Z = FOCALY * height_real / height_px;
+
+    // Estimar X, Y en coordenadas de cámara
+    float X = (u - CENTERX) * Z / FOCALX;
+    float Y = (v - CENTERY) * Z / FOCALY;
+
+    return cv::norm(cv::Point3f(X, Y, Z));
 }
 
 std::unordered_map<std::string, std::pair<float, float>> load_object_sizes(const std::string& filename) {
@@ -150,17 +233,15 @@ std::unordered_map<std::string, std::pair<float, float>> load_object_sizes(const
 
     return object_sizes;
 }
-void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
+
+
+cv::Vec2f draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
 #ifdef PROF
     InstrumentationTimer timer("draw_mean_slope_arrow_sobel");
 #endif
-    if (depth_map_input.empty()) {
-        std::cout << "[DEBUG] Depth map is empty\n";
-        return;
-    }
-    if (depth_map_input.type() != CV_32F) {
-        std::cout << "[DEBUG] Depth map type is not CV_32F: " << depth_map_input.type() << "\n";
-        return;
+    if (depth_map_input.empty() || depth_map_input.type() != CV_32F) {
+        std::cout << "[DEBUG] Depth map is empty or not CV_32F:" << depth_map_input.type() << "\n";
+        return cv::Vec2f(0.0f,0.0f);
     }
 
     // Clonar y verificar rango
@@ -169,7 +250,6 @@ void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
     // Imprimir min/max reales
     double minVal, maxVal;
     cv::minMaxLoc(depth_map, &minVal, &maxVal);
-    // std::cout << "[DEPTH RANGE] min: " << minVal << ", max: " << maxVal << "\n";
 
     // Preprocesado básico
     cv::patchNaNs(depth_map, 0.0);
@@ -180,12 +260,9 @@ void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
     int num_valid = cv::countNonZero(valid_mask);
     if (num_valid < 100) {
         std::cout << "[DEBUG] Too few valid pixels.\n";
-        return;
+        return cv::Vec2f(0.0f,0.0f);;
     }
-
-    // Suavizado espacial
-    cv::GaussianBlur(depth_map, depth_map, cv::Size(3, 3), 0.5);
-
+    
     // Gradientes con Sobel
     cv::Mat dx, dy;
     cv::Sobel(depth_map, dx, CV_32F, 1, 0, 3);
@@ -210,21 +287,21 @@ void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
 
     // Magnitud del gradiente
     cv::Mat grad_mag;
-    cv::magnitude(valid_dx, valid_dy, grad_mag);
+    cv::magnitude(mean_dx, mean_dy, grad_mag);
 
-    cv::Scalar mean_mag, stddev_mag;
-    cv::meanStdDev(grad_mag, mean_mag, stddev_mag, valid_mask);
+    // cv::Scalar mean_mag, stddev_mag;
+    // cv::meanStdDev(grad_mag, mean_mag, stddev_mag, valid_mask);
 
     // Dirección y norma
     cv::Point2f dir(mean_dx[0], mean_dy[0]);
     float norm = std::sqrt(dir.x * dir.x + dir.y * dir.y);
 
-    if (stddev_mag[0] < 1e-3 || norm < 1e-3) {
-        std::cout << "[DEBUG] Norm or deviation too small, not drawing arrow\n";
-        return;
-    }
+    // if (stddev_mag[0] < 1e-3 || norm < 1e-3) {
+    //     std::cout << "[DEBUG] Norm or deviation too small, not drawing arrow\n";
+    //     return;
+    // }
 
-    // Dibujar flecha en centro
+    // // Dibujar flecha en centro
     const float factor_visual = 10.0f;
     dir *= factor_visual;
 
@@ -237,7 +314,10 @@ void draw_mean_slope_arrow_sobel(cv::Mat& vis, const cv::Mat& depth_map_input) {
     text << "Mag: " << std::fixed << std::setprecision(2) << norm;
     cv::putText(vis, text.str(), cv::Point(10, 30),
                 cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
+    return cv::Vec2f(mean_dx[0],mean_dy[0]);
 }
+
+
 
 cv::Mat estimate_depth_map(torch::jit::script::Module& model, const cv::Mat& frame,
                            const cv::Size& input_size,
@@ -282,6 +362,7 @@ cv::Mat estimate_depth_map(torch::jit::script::Module& model, const cv::Mat& fra
     cv::resize(depth_map, depth_map, frame.size(), 0, 0, cv::INTER_CUBIC);
     return depth_map;
 }
+
 cv::Mat estimate_depth_map(cv::dnn::Net& net, const cv::Mat& frame,
                            const cv::Size& input_size = cv::Size(256, 256),
                            const std::vector<float>& mean = {},
@@ -343,6 +424,71 @@ cv::Mat estimate_depth_map(cv::dnn::Net& net, const cv::Mat& frame,
     return depth_map;
 }
 
+void annotate_with_depth(cv::Mat& frame,
+                         std::vector<ObjectBBox>& detections,
+                         const std::unordered_map<std::string, std::pair<float, float>>& object_sizes) {
+#ifdef PROF
+    InstrumentationTimer timer("annotate_with_depth");
+#endif
+    for (auto& bbox : detections) {
+        int x1 = std::clamp(static_cast<int>(bbox.x1), 0, frame.cols - 1);
+        int y1 = std::clamp(static_cast<int>(bbox.y1), 0, frame.rows - 1);
+        int x2 = std::clamp(static_cast<int>(bbox.x2), 0, frame.cols - 1);
+        int y2 = std::clamp(static_cast<int>(bbox.y2), 0, frame.rows - 1);
+
+        if (x2 <= x1 || y2 <= y1) continue;
+        float z_real = estimate_distance_from_yolo(bbox, object_sizes);
+        std::ostringstream label;
+        label << bbox.label << " " << std::fixed << std::setprecision(2)
+              << bbox.conf << " D:" << z_real << "m";
+
+        bbox.draw(frame);
+        cv::putText(frame, label.str(), cv::Point(x1, y1 - 5),
+                    cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 0, 0), 2);
+    }
+}
+
+cv::Mat estimate_depth_variant(DepthModel& model, const cv::Mat& frame) {
+    return std::visit(overloaded {
+        [&frame](cv::dnn::Net& net) -> cv::Mat {
+            return estimate_depth_map(net, frame,
+                cv::Size(256,256),
+                {0.5f, 0.5f, 0.5f},
+                {0.5f, 0.5f, 0.5f},
+                true, false);
+        },
+        [&frame](torch::jit::script::Module& mod) -> cv::Mat {
+            return estimate_depth_map(mod, frame,
+                cv::Size(518, 518),
+                {0.5f, 0.5f, 0.5f},
+                {0.5f, 0.5f, 0.5f},
+                true, false);
+        }
+    }, model);
+}
+
+
+       
+        // cv::Rect roi(x1, y1, x2 - x1, y2 - y1);
+        // cv::Mat depth_roi = depth_map(roi);
+
+        // float d_midas = static_cast<float>(cv::mean(depth_roi)[0]);
+
+        // // Si aún no hemos escalado el mapa, intentamos hacerlo con esta detección
+        // if (!depth_scaled_flag) {
+        //     if (z_real > 0.0f && d_midas > 1e-6f) {
+        //         scale_depth_map(depth_map, z_real, d_midas);
+        //         depth_scaled_flag = true;
+        //         // Recalcular d_midas después del escalado
+        //         d_midas = static_cast<float>(cv::mean(depth_map(roi))[0]);
+
+        //         std::cout << "[INFO] Escalado de profundidad aplicado: "
+        //                   << z_real << " / " << d_midas << " = " << (z_real / d_midas)
+        //                   << " (clase: " << bbox.label << ")\n";
+        //     }
+        // }
+
+
 // cv::Mat estimate_depth_map(cv::dnn::Net& midas, const cv::Mat& frame) {
 //     cv::Mat resized, input_blob, depth_map;
 
@@ -387,76 +533,3 @@ cv::Mat estimate_depth_map(cv::dnn::Net& net, const cv::Mat& frame,
 //                     cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255), 2);
 //     }
 // }
-
-void annotate_with_depth(cv::Mat& frame,
-                         cv::Mat& depth_map,
-                         std::vector<ObjectBBox>& detections,
-                         const std::unordered_map<std::string, std::pair<float, float>>& object_sizes,
-                         bool& depth_scaled_flag) {
-#ifdef PROF
-    InstrumentationTimer timer("annotate_with_depth");
-#endif
-    const float focal_px = 500.0f;//1472.768f;  // Estimación de focal (ajustable si calibras)
-
-    cv::resize(depth_map, depth_map, frame.size());
-    CV_Assert(depth_map.size() == frame.size());
-
-    for (auto& bbox : detections) {
-        int x1 = std::clamp(static_cast<int>(bbox.x1), 0, frame.cols - 1);
-        int y1 = std::clamp(static_cast<int>(bbox.y1), 0, frame.rows - 1);
-        int x2 = std::clamp(static_cast<int>(bbox.x2), 0, frame.cols - 1);
-        int y2 = std::clamp(static_cast<int>(bbox.y2), 0, frame.rows - 1);
-
-        if (x2 <= x1 || y2 <= y1) continue;
-
-        cv::Rect roi(x1, y1, x2 - x1, y2 - y1);
-        cv::Mat depth_roi = depth_map(roi);
-
-        float d_midas = static_cast<float>(cv::mean(depth_roi)[0]);
-
-        // Si aún no hemos escalado el mapa, intentamos hacerlo con esta detección
-        if (!depth_scaled_flag) {
-            float z_real = estimate_distance_from_yolo(bbox, object_sizes, focal_px);
-            if (z_real > 0.0f && d_midas > 1e-6f) {
-                scale_depth_map(depth_map, z_real, d_midas);
-                depth_scaled_flag = true;
-                // Recalcular d_midas después del escalado
-                d_midas = static_cast<float>(cv::mean(depth_map(roi))[0]);
-
-                std::cout << "[INFO] Escalado de profundidad aplicado: "
-                          << z_real << " / " << d_midas << " = " << (z_real / d_midas)
-                          << " (clase: " << bbox.label << ")\n";
-            }
-        }
-
-        std::ostringstream label;
-        label << bbox.label << " " << std::fixed << std::setprecision(2)
-              << bbox.conf << " D:" << d_midas << "m";
-
-        bbox.draw(frame);
-        cv::putText(frame, label.str(), cv::Point(x1, y1 - 5),
-                    cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255   , 0, 0), 3);
-    }
-}
-
-
-
-cv::Mat estimate_depth_variant(DepthModel& model, const cv::Mat& frame) {
-    return std::visit(overloaded {
-        [&frame](cv::dnn::Net& net) -> cv::Mat {
-            return estimate_depth_map(net, frame,
-                cv::Size(256,256),
-                {0.5f, 0.5f, 0.5f},
-                {0.5f, 0.5f, 0.5f},
-                true, false);
-        },
-        [&frame](torch::jit::script::Module& mod) -> cv::Mat {
-            return estimate_depth_map(mod, frame,
-                cv::Size(518, 518),
-                {0.5f, 0.5f, 0.5f},
-                {0.5f, 0.5f, 0.5f},
-                true, false);
-        }
-    }, model);
-}
-

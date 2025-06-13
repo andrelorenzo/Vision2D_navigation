@@ -1,13 +1,11 @@
 #include "helper.hpp"
 
-int model = 0;
-bool do_bench = true;
-
 void on_mouse_depth(int event, int x, int y, int, void*) {
     if (!depth_scaled_for_debug.empty()) {
         if (x >= 0 && x < depth_scaled_for_debug.cols &&
             y >= 0 && y < depth_scaled_for_debug.rows) {
             float value = depth_scaled_for_debug.at<float>(y, x);
+            std::cout << "\033[2J\033[1;1H";
             std::cout << "Depth at (" << x << ", " << y << ") = "
                       << std::fixed << std::setprecision(2) << value << " meters" << std::endl;
         }
@@ -15,14 +13,15 @@ void on_mouse_depth(int event, int x, int y, int, void*) {
 }
 
 void frame_capture_thread(bool use_tcp, int sock, cv::VideoCapture& cap) {
-    while (!stop_flag) {
+    while (!stop_flag.load()) {
         cv::Mat frame = use_tcp ? get_frame_from_tcp(sock) : get_frame_from_camera(cap);
         if (frame.empty()) continue;
         {
             std::lock_guard<std::mutex> guard(frame_mutex);
             shared_frame = frame.clone();
         }
-        global_frame_index++;
+        midas_ready.store(true);
+        yolo_ready.store(true);
     }
 }
 
@@ -32,14 +31,13 @@ void depth_thread(DepthModel& depth_model, DepthEstimationFn estimate_fn) {
 
     // Benchmarking variables
     std::deque<double> times_ms;
-    auto last_time = std::chrono::high_resolution_clock::now();
+    while (!stop_flag.load()) {
 
-    while (!stop_flag) {
-        uint64_t current_index = global_frame_index.load();
-        if (current_index <= last_frame_index) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if(!midas_ready.load()){
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
             continue;
         }
+        midas_ready.store(false);
 
         cv::Mat frame;
         {
@@ -59,9 +57,6 @@ void depth_thread(DepthModel& depth_model, DepthEstimationFn estimate_fn) {
             current_depth = depth.clone();
         }
 
-        depth_done_frame_index = current_index;
-        last_frame_index = current_index;
-
         // Benchmarking
         if (do_bench) {
             double elapsed_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
@@ -79,15 +74,13 @@ void depth_thread(DepthModel& depth_model, DepthEstimationFn estimate_fn) {
 
 
 void yolo_thread(YOLOv11& yolo_model) {
-    static uint64_t last_frame_index = 0;
 
-    while (!stop_flag) {
-        uint64_t current_index = global_frame_index.load();
-        if (current_index <= last_frame_index) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    while (!stop_flag.load()) {
+        if(!yolo_ready.load()){
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
             continue;
         }
-
+        yolo_ready.store(false);
         cv::Mat frame;
         {
             std::lock_guard<std::mutex> lock(frame_mutex);
@@ -99,8 +92,7 @@ void yolo_thread(YOLOv11& yolo_model) {
             std::lock_guard<std::mutex> lock(yolo_mutex);
             current_detections = detections;
         }
-        yolo_done_frame_index = current_index;
-        last_frame_index = current_index;
+
     }
 }
 
@@ -133,21 +125,7 @@ void annotate_depth_points(cv::Mat& vis_image, const cv::Mat& depth_map) {
 }
 
 
-uint64_t frames = 0;
-int main(int argc, char** argv) {
-#ifdef PROF
-    Instrumentor::Get().BeginSession("both_cpu","../profiling/mgpu_ycpu.json");
-#endif
-    bool use_tcp = true;
-    bool use_yolo = false;
-
-    if (torch::cuda::is_available()) {
-        std::cout << "CUDA está disponible para LibTorch.\n";
-    } else {
-        std::cout << "CUDA no está disponible para LibTorch.\n";
-    }
-    std::cout << "Build with CUDA: " << cv::cuda::getCudaEnabledDeviceCount() << std::endl;
-
+int parser(int argc, char ** argv, bool &use_yolo, bool &use_tcp, int &model, DepthModel &depth_model, DepthEstimationFn &depth_fn){
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "--camera" || arg == "-c") use_tcp = false;
@@ -162,12 +140,10 @@ int main(int argc, char** argv) {
             std::cout << "\t -m21, --midasv21\t Model: Midas v21 small\n";
             std::cout << "\t -da, --depthany\t Model: Depth anything v2 outdoor dynamic\n";
             std::cout << "\t -nb, --nobench\t Dont do benchmarking, acelerating therefore multitreadhing capabilities\n";
-            return 0;
+            return -1;
         }
     }
 
-    DepthModel depth_model;
-    DepthEstimationFn depth_fn;
 
     switch (model) {
         case 0:
@@ -194,7 +170,21 @@ int main(int argc, char** argv) {
     }
 
     depth_fn = estimate_depth_variant;
+    return 0;
+}
 
+int main(int argc, char** argv) {
+#ifdef PROF
+    Instrumentor::Get().BeginSession("both_cpu","../profiling/mgpu_ycpu.json");
+#endif
+    bool use_tcp = true;
+    bool use_yolo = false;
+    int model = 0;
+    DepthModel depth_model;
+    DepthEstimationFn depth_fn;
+
+    if(parser(argc, argv, use_yolo,use_tcp, model, depth_model, depth_fn) != 0)return -1;
+    
     YOLOv11 yolo_model("../models/yolo/yolo11n.onnx", 0.45f, 0.45f, [](int id, const std::string&) {
         return id == 41;
     });
@@ -214,6 +204,8 @@ int main(int argc, char** argv) {
             std::cout << "Connecting to camera..." << std::endl;
         }
     } else {
+        // cap.open("rtsp://192.168.1.122:8554/stream");
+        // cap.open("rtsp://admin:admin123@192.168.0.10:554/live0.265");
         cap.open(0);
     }
 
@@ -222,6 +214,7 @@ int main(int argc, char** argv) {
     std::thread t_yolo;
     if (use_yolo)
         t_yolo = std::thread(yolo_thread, std::ref(yolo_model));
+        
     uint64_t frames = 0;
     std::deque<double> times_ms;
 
@@ -247,42 +240,51 @@ int main(int argc, char** argv) {
         }
 
         static cv::Mat future;
-        cv::Mat depth_vis;
+        cv::Vec2f dir(0.0f,0.0f);
+        cv::Mat depth_8u, depth_colored, depth_real;
 
         // Procesamiento de profundidad
         if (!local_depth.empty() && local_depth.cols > 0 && local_depth.rows > 0) {
+            cv::Mat depth_normalized = normalize_depth_with_percentile(local_depth);
+
             if (model == 0) {
-                future = exponential_smoothing(local_depth, future, 0.5);
-            }else {
-                future = local_depth.clone();
+                future = exponential_smoothing(depth_normalized, future, 0.10);
+            } else {
+                future = local_depth.clone();  // sin normalizar para otros modelos
+            }
+            // future = local_depth.clone();
+
+            if (use_yolo && !frame.empty() && !local_detections.empty()) {
+                annotate_with_depth(frame, local_detections, obj_sizes);
+                calibrate_and_scale_midas(future, local_detections, obj_sizes, depth_real);
+            } else {
+                depth_real = future.clone();  // por si no se calibra, pasar algo válido
             }
 
-            cv::Mat smoothed_normalized = normalize_depth_with_percentile(future);
-            cv::Mat depth_8u;
-            smoothed_normalized.convertTo(depth_8u, CV_8U, 255.0);
-            cv::applyColorMap(depth_8u, depth_vis, cv::COLORMAP_MAGMA);
-            draw_mean_slope_arrow_sobel(depth_vis, smoothed_normalized);
-            annotate_depth_points(depth_vis, smoothed_normalized);
+            // Visualización con color
+            depth_normalized.convertTo(depth_8u, CV_8U, 255.0);  // ojo: usa depth_normalized, no future
+            cv::applyColorMap(depth_8u, depth_colored, cv::COLORMAP_MAGMA);
+
+            // Anotación visual
+            if (!depth_colored.empty() && !depth_real.empty()) {
+                annotate_depth_points(depth_colored, depth_real);  // ambos del mismo tamaño
+            }
+            // dir = draw_mean_slope_arrow_sobel(depth_colored, future);  // visual, real
 
         }
 
-        // Anotación con YOLO + profundidad
-        bool depth_scaled = false;
-        if (use_yolo && !frame.empty() && !local_detections.empty() && !local_depth.empty()) {
-            annotate_with_depth(frame, local_depth, local_detections, obj_sizes, depth_scaled);
-        }
-
+        
         // Mostrar imágenes
         if (use_yolo && !frame.empty() && !local_depth.empty()) {
             cv::imshow("YOLO + depth", frame);
         }
-        if (!depth_vis.empty() && !local_depth.empty()) {
-            cv::imshow("Depth", depth_vis);
+        if (!depth_colored.empty()) {
+            cv::imshow("Depth", depth_colored);
         }
 
         // Callback de mouse y depuración
         cv::setMouseCallback("Depth", on_mouse_depth);
-        depth_scaled_for_debug = local_depth.clone();
+        depth_scaled_for_debug = depth_real.clone();
         if (cv::waitKey(1) == 27) break;
 #ifdef PROF
         if (frames >= 600) break;
@@ -290,15 +292,14 @@ int main(int argc, char** argv) {
 #endif
     }
 
-
-    stop_flag = true;
+    stop_flag.store(true);
     t_capture.join();
     t_depth.join();
     if (use_yolo) t_yolo.join();
-
     if (use_tcp && sock >= 0) close(sock);
     if (!use_tcp) cap.release();
     cv::destroyAllWindows();
+
 #ifdef PROF
     Instrumentor::Get().EndSession(); 
 #endif
