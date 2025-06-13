@@ -1,4 +1,3 @@
-#define ESP32_CAM_WIFI
 
 #ifdef ESP32_CAM_WIFI
 #include <Arduino.h>

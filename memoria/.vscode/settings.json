@@ -1,0 +1,30 @@
+{
+  "cSpell.language": "es,en",
+  "cSpell.enabled": true,
+  "cSpell.diagnosticLevel": "Information",
+  "cSpell.allowCompoundWords": true,
+  "cSpell.words": [
+    "André",
+    "CUDA",
+    "evitación",
+    "extrapolación",
+    "Extrapolación",
+    "Kbps",
+    "Mbps",
+    "odometría",
+    "onnx",
+    "Pytorch"
+  ],
+  "cSpell.ignorePaths": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/*.cpp",
+    "**/*.c",
+    "**/*.h",
+    "**/*.py"
+  ],
+  "editor.rulers": [100],
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 100,
+  "editor.wrappingIndent": "same",
+}

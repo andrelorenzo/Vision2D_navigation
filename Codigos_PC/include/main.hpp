@@ -13,11 +13,18 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <variant>
+#include <functional>
+#include <unordered_map>
+#include <sstream>
 
 #include <torch/script.h>
+#include <torch/torch.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
+
 #include "yolov11.hpp"
+#include "profiler.hpp"
 
 #define SERVER_IP   "192.168.4.1"
 #define SERVER_PORT 8888
@@ -26,21 +33,38 @@
 #define DEV_TRHS 1
 #define MIN_TRHS 1
 
-// frame mutex
-extern std::mutex frame_mutex;
-extern std::condition_variable frame_cv;
-extern cv::Mat shared_frame;
+/*Expressed in pixels, conversion to mm in x: 0.00421875, in y: 0.004375*/
+#define FOCALX 1472.768 / 2.0
+#define FOCALY 1449.567 / 2.0
+#define CENTERX 86.747
+#define CENTERY 50.412
+#define MAXPOLY 20
 
-// camera buffer
-extern cv::Mat buffer_depth[2];
-extern cv::Mat buffer_yolo[2];
-extern std::atomic<int> frame_index;
-extern bool buffer_full;
+// debug varibles
+extern cv::Mat depth_scaled_for_debug;                // for mouse callback [DEBUG]
+extern bool do_bench;
+
+// shared objects between all flows
+extern cv::Mat shared_frame;                          // shared frame between yolo, midas and capture
+extern std::vector<ObjectBBox> current_detections;    // output shared object between yolo and main
+extern cv::Mat current_depth;                         // Output shared frame between midas and main
+
+// flow control for new frame
+extern std::atomic<bool> stop_flag;                   // atomic stop flag to exit all threads
+extern std::atomic<bool> midas_ready;                 // atomic new frame flag for midas
+extern std::atomic<bool> yolo_ready;                  // atomic new frame flag for yolo
+
+// mutex for each thread
+extern std::mutex frame_mutex;                        // mutex for camera
+extern std::mutex depth_mutex;                        // mutex for midas
+extern std::mutex yolo_mutex;                         // mutex for yolo
 
 
-extern std::atomic<bool> new_frame_ready, stop_flag;
-extern cv::Mat current_depth;
-extern std::vector<ObjectBBox> current_detections;
-extern std::atomic<int> threads_done;
-extern std::mutex threads_mutex;
-extern std::condition_variable threads_cv;
+// Quality of Life and templates
+using DepthModel = std::variant<cv::dnn::Net, torch::jit::script::Module>;
+using DepthEstimationFn = std::function<cv::Mat(DepthModel&, const cv::Mat&)>;
+
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;

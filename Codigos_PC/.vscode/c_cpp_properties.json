@@ -5,8 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "C:/opencv/build/include",
-                "C:/libtorch/libtorch/include"
+                "/usr/local/include/opencv4/",
+                //"${workspaceFolder}/libs/libtorch/include"
+                "/home/andrelorent/libtorch/",
+                "${workspaceFolder}/libs/onnxruntime-linux-x64-gpu-1.22.0/include"
+                
             ],
             "defines": [
                 "UNICODE",

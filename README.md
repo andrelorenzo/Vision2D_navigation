@@ -1,4 +1,11 @@
-Trabjo de Investigacion tutelado y posible TFM por la uc3m en el Master de robotica y automatización.
-  * Este trabajo cuenta de 2 partes:
-  *   Codigos_ESP, donde estan los diferentes codigos para introducir en una ESPCAM y una ESP
-  *   Codigos_PC, donde están los codigos de procesamiento de las imagenes provenientes del dron. 
+# Navigation control and object avoidance for small and low-cost UAVs
+
+> [!INFO]
+> This work is part of the Master's Thesis at the Master’s Degree in Robotics and Automation from University Carlos III, Madrid
+
+This repo is divided into 3 separete folders:
+
+* Codigos_PC: Codes and algorithm for the inference and OpenCV operation with MiDaS, yolo v11 for the obstacle avoidance.
+* Codigos_ESPNOW: Codes for the ESP32 modules that serve either as master and camera.
+* Memoria: Documentation in latex of the project.
+* Videos: video demostrations, examples and different test of the project.

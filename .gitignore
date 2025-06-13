@@ -1,5 +1,10 @@
 Codigos_PC/build/*
-Codigos_PC/models/model-f6b98070.pt
-Codigos_PC/models/traced_midas_model.pt
-Codigos_PC/libs/libtorch/*
 
+Codigos_PC/models/midas/model-f6b98070.onnx
+Codigos_PC/models/midas/dpt_hybrid_384_sim.onnx
+
+
+
+Codigos_PC/libs/libtorch/*
+Codigos_PC/libs/Depth-Anything-V2
+Codigos_PC/libs/onnxruntime-linux-x64-gpu-1.22.0
