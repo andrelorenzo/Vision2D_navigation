@@ -1,7 +1,7 @@
 # Navigation control and object avoidance for small and low-cost UAVs
 
 > [!NOTE]
-> This work is part of the Master's Thesis at the Master’s Degree in Robotics and Automation from University Carlos III, Madrid
+> This work is part of the Master's Thesis at the Master’s Degree in Robotics and Automation at University Carlos III, Madrid
 
 This repo is divided into 3 separete folders:
 
