@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "name": "x64-Release",
+      "generator": "Visual Studio 17 2022",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}/build",
+      "cmakeCommandArgs": "",
+      "variables": [
+        {
+          "name": "CMAKE_CUDA_COMPILER",
+          "value": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.9/bin/nvcc.exe"
+        },
+        {
+          "name": "CudaToolkitDir",
+          "value": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.9"
+        },
+        {
+          "name": "CMAKE_PREFIX_PATH",
+          "value": "C:/opencv/build/x64/vc16/lib;C:/libtorch/libtorch"
+        }
+      ]
+    }
+  ]
+}

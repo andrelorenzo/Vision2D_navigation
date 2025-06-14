@@ -85,7 +85,27 @@
         "hash_map": "cpp",
         "hash_set": "cpp",
         "slist": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "xlocmes": "cpp",
+        "coroutine": "cpp",
+        "ios": "cpp",
+        "locale": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     },
     "C_Cpp.default.compilerPath": "cl.exe"
 }

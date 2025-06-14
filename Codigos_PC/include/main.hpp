@@ -10,13 +10,14 @@
 #include <iomanip>
 #include <vector>
 #include <string>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 #include <variant>
 #include <functional>
 #include <unordered_map>
 #include <sstream>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#define CLOSESOCKET closesocket
+#pragma comment(lib, "ws2_32.lib")
 
 #include <torch/script.h>
 #include <torch/torch.h>

@@ -1,25 +1,25 @@
 #include "helper.hpp"
 
-bool recvAll(int sock, uint8_t* buffer, size_t length) {
+bool recvAll(SOCKET sock, uint8_t* buffer, size_t length) {
     size_t total = 0;
     while (total < length) {
-        ssize_t bytes = recv(sock, buffer + total, length - total, 0);
+        int bytes = recv(sock, reinterpret_cast<char*>(buffer + total), static_cast<int>(length - total), 0);
         if (bytes <= 0) return false;
         total += bytes;
     }
     return true;
 }
-
-cv::Mat get_frame_from_tcp(int sock) {
+cv::Mat get_frame_from_tcp(SOCKET sock) {
 #ifdef PROF
     InstrumentationTimer timer("get_frame_from_tcp");
 #endif
-    send(sock, CAPTURE_CMD, 4, 0);
+    send(sock, reinterpret_cast<const char*>(CAPTURE_CMD), 4, 0);
 
     uint8_t sizeBytes[4];
     if (!recvAll(sock, sizeBytes, 4)) return cv::Mat();
 
-    int imgSize = (sizeBytes[0] << 24) | (sizeBytes[1] << 16) | (sizeBytes[2] << 8) | sizeBytes[3];
+    int imgSize = (sizeBytes[0] << 24) | (sizeBytes[1] << 16) |
+                  (sizeBytes[2] << 8)  | sizeBytes[3];
     if (imgSize <= 0 || imgSize > 150000) return cv::Mat();
 
     std::vector<uint8_t> imgBuffer(imgSize);

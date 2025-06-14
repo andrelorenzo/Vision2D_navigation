@@ -1,6 +1,6 @@
 #pragma once
 
-// #define CUDA_ACC
+//#define CUDA_ACC
 // #define OPENCL_ACC
 
 #include <opencv2/opencv.hpp>

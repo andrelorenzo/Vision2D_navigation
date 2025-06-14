@@ -5,14 +5,14 @@ void on_mouse_depth(int event, int x, int y, int, void*) {
         if (x >= 0 && x < depth_scaled_for_debug.cols &&
             y >= 0 && y < depth_scaled_for_debug.rows) {
             float value = depth_scaled_for_debug.at<float>(y, x);
-            std::cout << "\033[2J\033[1;1H";
+            system("cls");
             std::cout << "Depth at (" << x << ", " << y << ") = "
                       << std::fixed << std::setprecision(2) << value << " meters" << std::endl;
         }
     }
 }
 
-void frame_capture_thread(bool use_tcp, int sock, cv::VideoCapture& cap) {
+void frame_capture_thread(bool use_tcp, SOCKET sock, cv::VideoCapture& cap) {
     while (!stop_flag.load()) {
         cv::Mat frame = use_tcp ? get_frame_from_tcp(sock) : get_frame_from_camera(cap);
         if (frame.empty()) continue;
@@ -66,8 +66,8 @@ void depth_thread(DepthModel& depth_model, DepthEstimationFn estimate_fn) {
             double fps = 1000.0 / avg_ms;
 
             std::cout << std::fixed << std::setprecision(2);
+            system("cls");
             std::cout << "[Benchmark - Depth] Avg frame time (10): " << avg_ms << " ms | FPS: " << fps << std::endl;
-            std::cout << "\033[2J\033[1;1H";
         }
     }
 }
@@ -148,7 +148,7 @@ int parser(int argc, char ** argv, bool &use_yolo, bool &use_tcp, int &model, De
     switch (model) {
         case 0:
             std::cout << "Model: Midas v21 small" << std::endl;
-            depth_model = cv::dnn::readNetFromONNX("../models/midas/model-small.onnx");
+            depth_model = cv::dnn::readNetFromONNX("C:/Users/ajlorenzo/Documents/vsc/Vision2D_navigation/Codigos_PC/models/midas/model-small.onnx");
             std::get<cv::dnn::Net>(depth_model).setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
             std::get<cv::dnn::Net>(depth_model).setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
             // std::get<cv::dnn::Net>(depth_model).setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
@@ -156,7 +156,7 @@ int parser(int argc, char ** argv, bool &use_yolo, bool &use_tcp, int &model, De
             break;
         case 1:
             std::cout << "Model: Depth anything v2 outdoor dynamic" << std::endl;
-            depth_model = torch::jit::load("../models/depth_anything/depth_anything_v2_vits_traced.pt");
+            depth_model = torch::jit::load("C:/Users/ajlorenzo/Documents/vsc/Vision2D_navigation/Codigos_PC/models/depth_anything/depth_anything_v2_vits_traced.pt");
             {
                 auto& model_ref = std::get<torch::jit::script::Module>(depth_model);
                 torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
@@ -185,29 +185,52 @@ int main(int argc, char** argv) {
 
     if(parser(argc, argv, use_yolo,use_tcp, model, depth_model, depth_fn) != 0)return -1;
     
-    YOLOv11 yolo_model("../models/yolo/yolo11n.onnx", 0.45f, 0.45f, [](int id, const std::string&) {
+    YOLOv11 yolo_model("C:/Users/ajlorenzo/Documents/vsc/Vision2D_navigation/Codigos_PC/models/yolo/yolo11n.onnx", 0.45f, 0.45f, [](int id, const std::string&) {
         return id == 41;
     });
-    auto obj_sizes = load_object_sizes("../models/yolo/object_sizes.txt");
+    auto obj_sizes = load_object_sizes("C:/Users/ajlorenzo/Documents/vsc/Vision2D_navigation/Codigos_PC/models/yolo/object_sizes.txt");
 
-    int sock = -1;
+    SOCKET sock = INVALID_SOCKET;  // Correcto para Windows
     cv::VideoCapture cap;
+
     if (use_tcp) {
+        // 1. Inicialización Winsock (debe estar al principio del uso de sockets)
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+            std::cerr << "WSAStartup failed.\n";
+            return -1;
+        }
+
+        // 2. Crear socket (retorna SOCKET, no int)
         sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock == INVALID_SOCKET) {
+            std::cerr << "Socket creation failed.\n";
+            WSACleanup();  // Limpieza por error temprano
+            return -1;
+        }
+
         sockaddr_in server{};
         server.sin_family = AF_INET;
         server.sin_port = htons(SERVER_PORT);
-        inet_pton(AF_INET, SERVER_IP, &server.sin_addr);
-        while (connect(sock, (sockaddr*)&server, sizeof(server)) < 0) {
-            std::cout << "\033[2J\033[1;1H";
+
+        // 3. Convertir IP (inet_pton solo está disponible desde Vista)
+        if (inet_pton(AF_INET, SERVER_IP, &server.sin_addr) <= 0) {
+            std::cerr << "Invalid address or address not supported.\n";
+            WSACleanup();
+            return -1;
+        }
+
+        // 4. Conexión en bucle (puede usarse sin cambios)
+        while (connect(sock, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR) {
+            system("cls");
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
             std::cout << "Connecting to camera..." << std::endl;
         }
     } else {
-        // cap.open("rtsp://192.168.1.122:8554/stream");
-        // cap.open("rtsp://admin:admin123@192.168.0.10:554/live0.265");
         cap.open(0);
+        // cap.open("rtsp://admin:admin123@192.168.0.10:554/live0.265");
     }
+
 
     std::thread t_capture(frame_capture_thread, use_tcp, sock, std::ref(cap));
     std::thread t_depth(depth_thread, std::ref(depth_model), depth_fn);
@@ -283,7 +306,7 @@ int main(int argc, char** argv) {
         }
 
         // Callback de mouse y depuración
-        cv::setMouseCallback("Depth", on_mouse_depth);
+        // cv::setMouseCallback("Depth", on_mouse_depth);
         depth_scaled_for_debug = depth_real.clone();
         if (cv::waitKey(1) == 27) break;
 #ifdef PROF
@@ -296,10 +319,12 @@ int main(int argc, char** argv) {
     t_capture.join();
     t_depth.join();
     if (use_yolo) t_yolo.join();
-    if (use_tcp && sock >= 0) close(sock);
+    if (use_tcp && sock != INVALID_SOCKET) {
+        closesocket(sock);
+        WSACleanup();
+    }
     if (!use_tcp) cap.release();
     cv::destroyAllWindows();
-
 #ifdef PROF
     Instrumentor::Get().EndSession(); 
 #endif

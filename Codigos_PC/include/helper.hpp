@@ -3,8 +3,8 @@
 #include "main.hpp"
 
 // camera
-bool recvAll(int sock, uint8_t* buffer, size_t length);
-cv::Mat get_frame_from_tcp(int sock);
+bool recvAll(SOCKET sock, uint8_t* buffer, size_t length);
+cv::Mat get_frame_from_tcp(SOCKET sock);
 cv::Mat get_frame_from_camera(cv::VideoCapture& cap);
 
 // opencv depth and gradient calculations
