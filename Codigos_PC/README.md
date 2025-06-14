@@ -88,10 +88,10 @@ nvcc --version
 > This are my personal path, for you may and will be different.
 
 ### Compiling OpenCV
-Execute cmake-gui:
-Source code: C:\opencv_cuda\opencv
-Where to build: C:\opencv\build
-Press configure and select: Visual Studio 17 2022, x64, then click finish
+* Execute cmake-gui:
+* Source code: C:\opencv_cuda\opencv
+* Where to build: C:\opencv\build
+* Press configure and select: Visual Studio 17 2022, x64, then click finish
 
 Then it comes the fun (not so fun) part of selecting, deselecting and inputting paths, for some of this configuration will not appear until you configure multiple times =>Example: when you click `WITH_CUDA` and click configure a new set of parameters will appear that have to do with CUDA, this will happen with everything so you must configure and check again all the parameters until everything is setup, also you must click the `advanced` button in the right up corner at the right of search.
 Finally, some of this may be already covered for you (if you followed the steps most of the paths will be already okay)
