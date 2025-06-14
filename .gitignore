@@ -2,7 +2,7 @@ Codigos_PC/build/*
 
 Codigos_PC/models/midas/model-f6b98070.onnx
 Codigos_PC/models/midas/dpt_hybrid_384_sim.onnx
-
+Codigos_PC/profiling/*
 
 
 Codigos_PC/libs/libtorch/*

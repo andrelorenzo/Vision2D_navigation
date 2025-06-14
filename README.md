@@ -8,7 +8,11 @@
 
 This repo is divided into 3 separete folders:
 
-* Codigos_PC: Codes and algorithm for the inference and OpenCV operation with MiDaS, yolo v11 for the obstacle avoidance.
+* Codigos_PC: Codes and algorithm for the inference and OpenCV operation with MiDaS, yolo v11 for the obstacle avoidance. [Windows tutorial](/home/andrelorent/Programming/Vision2D_navigation/Codigos_PC/README.md)
 * Codigos_ESPNOW: Codes for the ESP32 modules that serve either as master and camera.
 * Memoria: Documentation of the project.
 * Videos: Video demostrations, examples and different test of the project.
+
+TODO:
+* Add README.md for Codigos_ESPNOW
+

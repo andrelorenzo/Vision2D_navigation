@@ -61,20 +61,16 @@ else()
     message(WARNING "nvToolsExt.lib no encontrado. CUDA::nvToolsExt no será enlazado.")
 endif()
 
-# Ejecutable principal
-# add_executable(cuda_check src/test_win.cpp)
-# Full code with both models in cpp and multitreding
+
+# =======================================MAIN========================================
 add_executable(obs_avoid_full_cpp_mt
     src/main.cpp
     src/yolov11.cpp
     src/helper.cpp
     src/globals.cpp
 )
-# Incluir directorios de OpenCV y Torch
 target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${TORCH_INCLUDE_DIRS})
-
-# Definiciones para compilación estática
 target_compile_definitions(obs_avoid_full_cpp_mt PRIVATE
     -D_WIN32
     -D_WINDOWS
@@ -82,77 +78,39 @@ target_compile_definitions(obs_avoid_full_cpp_mt PRIVATE
     -DNOMINMAX
     -D_USE_MATH_DEFINES
 )
+target_link_libraries(obs_avoid_full_cpp_mt ${TORCH_LIBRARIES} ${OpenCV_LIBS} ws2_32)
+# ===================================================================================
 
-# Enlazado con dependencias
+
+## =========UNCOMENT FOR CUDA CHECKING============
+# add_executable(cuda_check src/test_win.cpp)
+
+# target_include_directories(cuda_check PRIVATE ${OpenCV_INCLUDE_DIRS})
+# target_include_directories(cuda_check PRIVATE ${TORCH_INCLUDE_DIRS})
+
+# # Definiciones para compilación estática
+# target_compile_definitions(cuda_check PRIVATE
+#     -D_WIN32
+#     -D_WINDOWS
+#     -DOPENCV_STATIC
+#     -DNOMINMAX
+#     -D_USE_MATH_DEFINES
+# )
+
 # target_link_libraries(cuda_check
 #     ${OpenCV_LIBS}
 #     ${TORCH_LIBRARIES}
 # )
-target_link_libraries(obs_avoid_full_cpp_mt ${TORCH_LIBRARIES} ${OpenCV_LIBS} ws2_32)
+# if (TARGET CUDA::nvToolsExt)
+#     target_link_libraries(cuda_check CUDA::nvToolsExt)
+# endif()
+## ===============================================
+
+
+
 
 if (TARGET CUDA::nvToolsExt)
     target_link_libraries(obs_avoid_full_cpp_mt CUDA::nvToolsExt)
 endif()
 
-# Opcional: incluir directorio de librerías estáticas por seguridad
 link_directories("C:/opencv_cuda/x64/vc17/staticlib")
-
-
-# # Full code with both models in cpp and multitreding
-# add_executable(obs_avoid_full_cpp_mt
-#     src/main.cpp
-#     src/yolov11.cpp
-#     src/helper.cpp
-#     src/globals.cpp
-# )
-# target_link_libraries(obs_avoid_full_cpp_mt ${TORCH_LIBRARIES} ${OpenCV_LIBS} ws2_32)
-# target_include_directories(obs_avoid_full_cpp_mt PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-# #Full code with both models in cpp 
-# add_executable(obs_avoid_full_cpp
-#     old/main_fullcpp.cpp
-#     old/serialib.cpp
-#     src/yolov11.cpp
-# )
-# target_link_libraries(obs_avoid_full_cpp PRIVATE ${TORCH_LIBRARIES} ${OpenCV_LIBS})
-# target_include_directories(obs_avoid_full_cpp PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-
-# #Test of ESPNOW bridge + Serial 
-# add_executable(obstacle_avoidance 
-#     src/main.cpp
-#     src/serialib.cpp
-# )
-# target_link_libraries(obstacle_avoidance PRIVATE ${OpenCV_LIBS})
-# target_include_directories(obstacle_avoidance PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-# #Test of WIfi + YOLOv11
-# add_executable(obstacle_avoidance_wifi 
-#     src/main_wifi.cpp
-#     src/serialib.cpp
-#     src/yolov11.cpp
-# )
-# target_link_libraries(obstacle_avoidance_wifi PRIVATE ${OpenCV_LIBS})
-# target_include_directories(obstacle_avoidance_wifi PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-# # Get camera params
-# add_executable(get_camera_params
-#     src/main_get_camera_params.cpp
-# )
-# target_link_libraries(get_camera_params PRIVATE ${OpenCV_LIBS})
-# target_include_directories(get_camera_params PRIVATE ${OpenCV_INCLUDE_DIRS})
-
-
-# set(ORT_PATH /home/andrelorent/programming/Vision2D_navigation/Codigos_PC/libs/onnxruntime-linux-x64-gpu-1.22.0)
-
-# add_executable(depth_anything_app src/main_onnx_rt.cpp)
-
-# target_include_directories(depth_anything_app PRIVATE ${ORT_PATH}/include)
-# target_link_directories(depth_anything_app PRIVATE ${ORT_PATH}/lib)
-
-# target_link_libraries(depth_anything_app
-#     PRIVATE
-#     ${OpenCV_LIBS}
-#     onnxruntime
-#     onnxruntime_providers_cuda
-# )
