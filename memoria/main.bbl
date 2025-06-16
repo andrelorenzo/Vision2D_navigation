@@ -1,0 +1,529 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{Ranftl2020}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=f13b87ed1a6410067504966eac03e9a2}{%
+           family={Ranftl},
+           familyi={R\bibinitperiod},
+           given={René},
+           giveni={R\bibinitperiod}}}%
+        {{hash=4ee0621ee5837a920708854b07fef7f7}{%
+           family={Lasinger},
+           familyi={L\bibinitperiod},
+           given={Katrin},
+           giveni={K\bibinitperiod}}}%
+        {{hash=89d0278ff885d57b7708ae120200f573}{%
+           family={Hafner},
+           familyi={H\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=205714eb0cc6921c15493da21a574130}{%
+           family={Schindler},
+           familyi={S\bibinitperiod},
+           given={Konrad},
+           giveni={K\bibinitperiod}}}%
+        {{hash=9025300f43a193cfed8e10e924f2a117}{%
+           family={Koltun},
+           familyi={K\bibinitperiod},
+           given={Vladlen},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{9a396274beaaf111452927a46e80f547}
+      \strng{fullhash}{fa15ac494a832be56810827b8030d68a}
+      \strng{bibnamehash}{9a396274beaaf111452927a46e80f547}
+      \strng{authorbibnamehash}{9a396274beaaf111452927a46e80f547}
+      \strng{authornamehash}{9a396274beaaf111452927a46e80f547}
+      \strng{authorfullhash}{fa15ac494a832be56810827b8030d68a}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}
+      \field{title}{Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer}
+      \field{year}{2020}
+    \endentry
+    \entry{cuda_opencv_repo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=5bd4c87976f48e6a53919d53e14025e9}{%
+           family={OpenCV},
+           familyi={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{5bd4c87976f48e6a53919d53e14025e9}
+      \strng{fullhash}{5bd4c87976f48e6a53919d53e14025e9}
+      \strng{bibnamehash}{5bd4c87976f48e6a53919d53e14025e9}
+      \strng{authorbibnamehash}{5bd4c87976f48e6a53919d53e14025e9}
+      \strng{authornamehash}{5bd4c87976f48e6a53919d53e14025e9}
+      \strng{authorfullhash}{5bd4c87976f48e6a53919d53e14025e9}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Compilar OpenCV con CUDA.}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://opencv.org/platforms/cuda/
+      \endverb
+      \verb{url}
+      \verb https://opencv.org/platforms/cuda/
+      \endverb
+      \warn{\item Entry 'cuda_opencv_repo' (references.bib): Invalid format '10-06-2025' of date field 'urldate' - ignoring}
+    \endentry
+    \entry{opencv_repo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=7556a114aa461c653a07bc586beaebfd}{%
+           family={Team},
+           familyi={T\bibinitperiod},
+           given={OpenCV},
+           giveni={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{7556a114aa461c653a07bc586beaebfd}
+      \strng{fullhash}{7556a114aa461c653a07bc586beaebfd}
+      \strng{bibnamehash}{7556a114aa461c653a07bc586beaebfd}
+      \strng{authorbibnamehash}{7556a114aa461c653a07bc586beaebfd}
+      \strng{authornamehash}{7556a114aa461c653a07bc586beaebfd}
+      \strng{authorfullhash}{7556a114aa461c653a07bc586beaebfd}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{GitHub repository}
+      \field{title}{OpenCV: Open Source Computer Vision Library}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://github.com/opencv/opencv
+      \endverb
+      \verb{url}
+      \verb https://github.com/opencv/opencv
+      \endverb
+      \warn{\item Entry 'opencv_repo' (references.bib): Invalid format '15-03-2025' of date field 'urldate' - ignoring}
+    \endentry
+    \entry{espnow_repo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=5dbf4b4cef955ac1a7b0da67dd48c59e}{%
+           family={espressif},
+           familyi={e\bibinitperiod}}}%
+      }
+      \strng{namehash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \strng{fullhash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \strng{bibnamehash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \strng{authorbibnamehash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \strng{authornamehash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \strng{authorfullhash}{5dbf4b4cef955ac1a7b0da67dd48c59e}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Protocolo de comunicación inálambrico}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www.espressif.com/en/solutions/low-power-solutions/esp-now
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/en/solutions/low-power-solutions/esp-now
+      \endverb
+      \warn{\item Entry 'espnow_repo' (references.bib): Invalid format '23-05-2025' of date field 'urldate' - ignoring}
+    \endentry
+    \entry{serialib_repo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=713f7e794c037abdc41f2520d1b27c10}{%
+           family={imabot2},
+           familyi={i\bibinitperiod}}}%
+      }
+      \strng{namehash}{713f7e794c037abdc41f2520d1b27c10}
+      \strng{fullhash}{713f7e794c037abdc41f2520d1b27c10}
+      \strng{bibnamehash}{713f7e794c037abdc41f2520d1b27c10}
+      \strng{authorbibnamehash}{713f7e794c037abdc41f2520d1b27c10}
+      \strng{authornamehash}{713f7e794c037abdc41f2520d1b27c10}
+      \strng{authorfullhash}{713f7e794c037abdc41f2520d1b27c10}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{GitHub repository}
+      \field{title}{Library for serial communications in Linux and Windows}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://github.com/imabot2/serialib
+      \endverb
+      \verb{url}
+      \verb https://github.com/imabot2/serialib
+      \endverb
+      \warn{\item Entry 'serialib_repo' (references.bib): Invalid format '16-05-2025' of date field 'urldate' - ignoring}
+    \endentry
+    \entry{cheng2024depthanything}{misc}{}
+      \name{author}{7}{}{%
+        {{hash=765bc94d57cffc4ed141f33df561ba39}{%
+           family={Cheng},
+           familyi={C\bibinitperiod},
+           given={Bowen},
+           giveni={B\bibinitperiod}}}%
+        {{hash=c92e1a689fa6eae31f7ab57c517b873d}{%
+           family={Xie},
+           familyi={X\bibinitperiod},
+           given={Enze},
+           giveni={E\bibinitperiod}}}%
+        {{hash=d82456480d8fe1e977069c274d8d54e6}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Yijie},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=332d3c7067015d60f6c6cf188764e089}{%
+           family={Song},
+           familyi={S\bibinitperiod},
+           given={Lin},
+           giveni={L\bibinitperiod}}}%
+        {{hash=be10c8d9ed218a03b79ed4d51b938110}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Xuming},
+           giveni={X\bibinitperiod}}}%
+        {{hash=b2141db22d932a08b0bcac5f45f96d49}{%
+           family={Kuang},
+           familyi={K\bibinitperiod},
+           given={Zhanghui},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=fb56c9b7f6540f7a811303a015d5cbf5}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Wayne},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{7d2b3400d921389f56414d8709fbaad8}
+      \strng{fullhash}{487bdf132c122cdc79d1a8b43c9570b2}
+      \strng{bibnamehash}{7d2b3400d921389f56414d8709fbaad8}
+      \strng{authorbibnamehash}{7d2b3400d921389f56414d8709fbaad8}
+      \strng{authornamehash}{7d2b3400d921389f56414d8709fbaad8}
+      \strng{authorfullhash}{487bdf132c122cdc79d1a8b43c9570b2}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CV}
+      \field{eprinttype}{arXiv}
+      \field{title}{Depth Anything: Unleashing the Power of Large-Scale Unlabeled Data}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2403.09603
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2403.09603
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2403.09603
+      \endverb
+    \endentry
+    \entry{onnx_repo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=4feafb5ee38bdd8a28324ffa181f0e76}{%
+           family={Foundation},
+           familyi={F\bibinitperiod},
+           given={The\bibnamedelima Linux},
+           giveni={T\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \strng{fullhash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \strng{bibnamehash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \strng{authorbibnamehash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \strng{authornamehash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \strng{authorfullhash}{4feafb5ee38bdd8a28324ffa181f0e76}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Estandar de modelos de machine learnings.}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://onnx.ai/
+      \endverb
+      \verb{url}
+      \verb https://onnx.ai/
+      \endverb
+      \warn{\item Entry 'onnx_repo' (references.bib): Invalid format '30-05-2025' of date field 'urldate' - ignoring}
+    \endentry
+    \entry{bochkovskii2025depthpro}{article}{}
+      \name{author}{7}{}{%
+        {{hash=0f88db363e1f4d647662d82b2761a7aa}{%
+           family={Bochkovskii},
+           familyi={B\bibinitperiod},
+           given={Aleksei},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ec75e8b90a87a8f56d97d27f96c20365}{%
+           family={Delaunoy},
+           familyi={D\bibinitperiod},
+           given={Amaël},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d203f38c98ac5e4f208fea159bc76b59}{%
+           family={Germain},
+           familyi={G\bibinitperiod},
+           given={Hugo},
+           giveni={H\bibinitperiod}}}%
+        {{hash=c1af6624eee7a1edf5b42f26b7d0b73b}{%
+           family={Santos},
+           familyi={S\bibinitperiod},
+           given={Marcel},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b6409d6f881763e31fc29bc2ae0df1a8}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Yichao},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=0a0f8c17cdfe2ebcaafe855557b17d2c}{%
+           family={Richter},
+           familyi={R\bibinitperiod},
+           given={Stephan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=9025300f43a193cfed8e10e924f2a117}{%
+           family={Koltun},
+           familyi={K\bibinitperiod},
+           given={Vladlen},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{c1e1a8e5d7e3eaf3dc5f40754cff3a8e}
+      \strng{fullhash}{5da269b3299263f204d2b8f7acc52a29}
+      \strng{bibnamehash}{c1e1a8e5d7e3eaf3dc5f40754cff3a8e}
+      \strng{authorbibnamehash}{c1e1a8e5d7e3eaf3dc5f40754cff3a8e}
+      \strng{authornamehash}{c1e1a8e5d7e3eaf3dc5f40754cff3a8e}
+      \strng{authorfullhash}{5da269b3299263f204d2b8f7acc52a29}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Modelo de depth estimation monocular en cero-shot que genera mapas de profundidad métricos de alta resolución (~2.25 MP) en 0.3 s con detalles finos y sin requerir metadatos de cámara :contentReference[oaicite:1]{index=1}.}
+      \field{journaltitle}{arXiv preprint arXiv:2410.02073}
+      \field{title}{Depth Pro: Sharp Monocular Metric Depth in Less Than a Second}
+      \field{year}{2025}
+    \endentry
+    \entry{ke2023marigold}{article}{}
+      \name{author}{6}{}{%
+        {{hash=f0b7eac36067993db2d3f3d9e3726f95}{%
+           family={Ke},
+           familyi={K\bibinitperiod},
+           given={Bingxin},
+           giveni={B\bibinitperiod}}}%
+        {{hash=6af3d88e3c30bf0223359dbec2b7f8fe}{%
+           family={Obukhov},
+           familyi={O\bibinitperiod},
+           given={Anton},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ad6b4d69c93f831324b44b4f905f961f}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={Shengyu},
+           giveni={S\bibinitperiod}}}%
+        {{hash=6add5033bcf23c54eefab1dbd672c626}{%
+           family={Metzger},
+           familyi={M\bibinitperiod},
+           given={Nando},
+           giveni={N\bibinitperiod}}}%
+        {{hash=6a4ddeda78631b3fe0fff321f7fd179b}{%
+           family={Daudt},
+           familyi={D\bibinitperiod},
+           given={Rodrigo},
+           giveni={R\bibinitperiod}}}%
+        {{hash=205714eb0cc6921c15493da21a574130}{%
+           family={Schindler},
+           familyi={S\bibinitperiod},
+           given={Konrad},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{9659dda6721cb61a4a57360b489a21b3}
+      \strng{fullhash}{d2ad4e42746501151103d80f1bfb0d99}
+      \strng{bibnamehash}{9659dda6721cb61a4a57360b489a21b3}
+      \strng{authorbibnamehash}{9659dda6721cb61a4a57360b489a21b3}
+      \strng{authornamehash}{9659dda6721cb61a4a57360b489a21b3}
+      \strng{authorfullhash}{d2ad4e42746501151103d80f1bfb0d99}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Marigold aprovecha un modelo de difusión (Stable Diffusion) como estimador monocular de profundidad (invariante afín) con excelente generalización en cero‑shot :contentReference[oaicite:2]{index=2}.}
+      \field{journaltitle}{arXiv preprint arXiv:2312.02145}
+      \field{title}{Repurposing Diffusion‑Based Image Generators for Monocular Depth Estimation}
+      \field{year}{2023}
+    \endentry
+    \entry{hu2025-depthcrafter}{inproceedings}{}
+      \name{author}{8}{}{%
+        {{hash=66605f60ab11f3da205d46f6110a088e}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Wenbo},
+           giveni={W\bibinitperiod}}}%
+        {{hash=fb32fbca135f12303d19fe89f84eaf6b}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Xiangjun},
+           giveni={X\bibinitperiod}}}%
+        {{hash=fbefb123f0fb2b74e98ede7afb2aa058}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Xiaoyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=38860272a57a4b246307b1ef9704f589}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Sijie},
+           giveni={S\bibinitperiod}}}%
+        {{hash=6a241931e2cf54f89745bb81d69cd9bc}{%
+           family={Cun},
+           familyi={C\bibinitperiod},
+           given={Xiaodong},
+           giveni={X\bibinitperiod}}}%
+        {{hash=2c81656c924858824dfb10d50423b77a}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yong},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=b0a7fc1741645deb23f3f539c91d998d}{%
+           family={Quan},
+           familyi={Q\bibinitperiod},
+           given={Long},
+           giveni={L\bibinitperiod}}}%
+        {{hash=a0e29acfeb76985fc3a8e6627409227a}{%
+           family={Shan},
+           familyi={S\bibinitperiod},
+           given={Ying},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{256874a00b0e35da6b05ba261bc066cb}
+      \strng{fullhash}{77e89740c88124073429254c65bfa2ed}
+      \strng{bibnamehash}{256874a00b0e35da6b05ba261bc066cb}
+      \strng{authorbibnamehash}{256874a00b0e35da6b05ba261bc066cb}
+      \strng{authornamehash}{256874a00b0e35da6b05ba261bc066cb}
+      \strng{authorfullhash}{77e89740c88124073429254c65bfa2ed}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}
+      \field{title}{DepthCrafter: Generating Consistent Long Depth Sequences for Open‑world Videos}
+      \field{year}{2025}
+    \endentry
+    \entry{hu2024metric3dv2}{article}{}
+      \name{author}{10}{}{%
+        {{hash=0e67f65be9c795d45521d5004ab5acc4}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Mu},
+           giveni={M\bibinitperiod}}}%
+        {{hash=90e2a9ad9a0fa5c71837be38fa7f63a2}{%
+           family={Yin},
+           familyi={Y\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod}}}%
+        {{hash=dab90d227b512e9cedb41532e46ba87a}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Chi},
+           giveni={C\bibinitperiod}}}%
+        {{hash=32887024e9e5d2743d9caf6fe9112748}{%
+           family={Cai},
+           familyi={C\bibinitperiod},
+           given={Zhipeng},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=dd85145c2ffbc1fa0825a1ff4d9dda56}{%
+           family={Long},
+           familyi={L\bibinitperiod},
+           given={Xiaoxiao},
+           giveni={X\bibinitperiod}}}%
+        {{hash=dd060cd064f8f607eb1bee6712820270}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod}}}%
+        {{hash=85b33fef2c2e6fb22f2a34b1f79f276d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Kaixuan},
+           giveni={K\bibinitperiod}}}%
+        {{hash=e63f0ad91019f51740425f4cf7860eca}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Gang},
+           giveni={G\bibinitperiod}}}%
+        {{hash=9e49384c78f6861746fe787b12339aed}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Chunhua},
+           giveni={C\bibinitperiod}}}%
+        {{hash=0d6f0106ed13aa88a0ff49e841f0fead}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Shaojie},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{0a38b4db72ac64a30865fedf5b2edf56}
+      \strng{fullhash}{15a5e34743981e26de66d336c6f9ef9a}
+      \strng{bibnamehash}{0a38b4db72ac64a30865fedf5b2edf56}
+      \strng{authorbibnamehash}{0a38b4db72ac64a30865fedf5b2edf56}
+      \strng{authornamehash}{0a38b4db72ac64a30865fedf5b2edf56}
+      \strng{authorfullhash}{15a5e34743981e26de66d336c6f9ef9a}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Metric3D v2 estima simultáneamente profundidad métrica y normales de superficie en modo cero‑shot, resolviendo la ambigüedad métrica mediante transformación canónica de la cámara y entrenamiento con datos masivos, logrando SOTA en múltiples benchmarks :contentReference[oaicite:3]{index=3}.}
+      \field{journaltitle}{IEEE Transactions on Pattern Analysis and Machine Intelligence}
+      \field{title}{Metric3D v2: {A} Versatile Monocular Geometric Foundation Model for Zero‑shot Metric Depth and Surface Normal Estimation}
+      \field{year}{2024}
+    \endentry
+    \entry{yolo11_ultralytics}{software}{}
+      \name{author}{3}{}{%
+        {{hash=c5c5e5cd7f4f477f617289b32613deb0}{%
+           family={Jocher},
+           familyi={J\bibinitperiod},
+           given={Glenn},
+           giveni={G\bibinitperiod}}}%
+        {{hash=b8739ebbf3f871d471b6720a02ed541f}{%
+           family={Qiu},
+           familyi={Q\bibinitperiod},
+           given={Jing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=88f069848482a556e416f713d2819905}{%
+           family={Ultralytics},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{a511bc51414991c468bdd64d15d8f001}
+      \strng{fullhash}{a511bc51414991c468bdd64d15d8f001}
+      \strng{bibnamehash}{a511bc51414991c468bdd64d15d8f001}
+      \strng{authorbibnamehash}{a511bc51414991c468bdd64d15d8f001}
+      \strng{authornamehash}{a511bc51414991c468bdd64d15d8f001}
+      \strng{authorfullhash}{a511bc51414991c468bdd64d15d8f001}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Ultralytics YOLO11}
+      \field{version}{11.0.0}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://github.com/ultralytics/ultralytics
+      \endverb
+      \verb{url}
+      \verb https://github.com/ultralytics/ultralytics
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

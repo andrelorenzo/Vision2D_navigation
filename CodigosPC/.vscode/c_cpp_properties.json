@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "/usr/local/include/opencv4/",
+                //"${workspaceFolder}/libs/libtorch/include"
+                "/home/andrelorent/libtorch/",
+                "${workspaceFolder}/libs/onnxruntime-linux-x64-gpu-1.22.0/include"
+                
+            ],
+            "defines": [
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/bin/g++11",
+            "cStandard": "c23",
+            "cppStandard": "c++23",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
+
